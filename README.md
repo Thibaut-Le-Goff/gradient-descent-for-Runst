@@ -26,7 +26,7 @@ With the guest value of the slope ($\color{green}0$) and the intercept ($\color{
     <img src="images/begining.png" width="450"/>
 </p>
 
-The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y \color{green} _{\textrm{prediction line}}$ and $\color{blue} y  _{\color{red} given_-value}$ (the difference between $\textrm{\color{green}what the algorithm should \color{blue} find \color{red} from the given value}$ and $\textrm{\color{blue} the observed value \color{red} from the given value}$) ```for``` each samples:
+The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y \color{green} _{\textrm{prediction line}}$ and $\color{blue} y  {\color{red} _given_-value}$ (the difference between $\textrm{\color{green}what the algorithm should \color{blue} find \color{red} from the given value}$ and $\textrm{\color{blue} the observed value \color{red} from the given value}$) ```for``` each samples:
 
 <p align="center">
     <img src="images/substraction.png" width="450"/>
