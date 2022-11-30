@@ -26,7 +26,7 @@ With the guest value of the slope ($\color{green}0$) and the intercept ($\color{
     <img src="images/begining.png" width="450"/>
 </p>
 
-The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y \color{green} _{\textrm{prediction line}}$ and $\color{blue} y  {\color{red} _given_-value}$ (the difference between $\textrm{\color{green}what the algorithm should \color{blue} find \color{red} from the given value}$ and $\textrm{\color{blue} the observed value \color{red} from the given value}$) ```for``` each samples:
+The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y \color{green} _{\textrm{prediction line}}$ and $\color{blue} y  \color{red}_{given_-value}$ (the difference between $\textrm{\color{green}what the algorithm should \color{blue} find \color{red} from the given value}$ and $\textrm{\color{blue} the observed value \color{red} from the given value}$) ```for``` each samples:
 
 <p align="center">
     <img src="images/substraction.png" width="450"/>
@@ -50,17 +50,21 @@ But that doesn't make sense because the result is lower than the difference betw
 
 The solution to this is to make sure the diffrences are positive by calculating the square of the negative one: $$\textrm{sum} = (-0.871)^2 + 0.531 + (-0.135)^2$$
 
-But we also need to calculate the square of positive differences to keep a sense of proportionality between the differences: $$\textrm{sum} = (-0.871)^2 + 0.531^2 + (-0.135)^2$$ $$=> \textrm{sum} = 1.059$$
+But we also need to calculate the square of positive differences to keep a sense of proportionality between the differences: $$\textrm{sum of squares} = (-0.871)^2 + 0.531^2 + (-0.135)^2$$ $$=> \textrm{sum of squares} = 1.059$$
 <center><ins>End of the note</ins></center>
 
 ___
 
-The sum of square is for the main exemple:
+The sum of square for the main exemple:
 $$\textrm{sum of squares} = (-1.4)^2 + (-1.9)^2 + (-3.2)^2$$ $$=> \textrm{sum of squares} = 15.81$$
 
 Now that we have the sum of square we can put it in another graph, a 3D one:
 
 
+
+$$\textrm{step size} = \textrm{sum of squares} * \textrm{learning rate}$$
+
+$$\textrm{new value} = \textrm{value} - \textrm{step size}$$
 
 In a neural network...
 
