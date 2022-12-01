@@ -34,7 +34,7 @@ fn main() {
     let mut step_size: f64;
     // The 
 
-    let slope_intercept_learning_rate: [f64; 2] = [0.01, 0.1];
+    let slope_intercept_learning_rate: [f64; 2] = [0.001, 0.01];
     // for 0 :
     // The multiplicator that will determine the step size when 
     // it's use to multiply sum_derivative_square_residual.
@@ -86,6 +86,11 @@ fn main() {
         // for eache layer (look backward)
 
         for y in 0..= slope_intercept.len() - 1 {
+
+            if true_counter == slope_intercept_trouve.len() {
+                break;
+            }
+
             println!("\npour la valeur (0 = slope, 1 = intercept) : {}", y);
 
         // for each type of data I want to predicte, here this is the 
@@ -127,13 +132,13 @@ fn main() {
                     if y == 0 {
                         // if the data is the slope (weights), there would be another 
                         // if to see in wich layer is the weight
-                        derivative_square_residual = (-2.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = (-12.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
 
                     if y == 1 {
                         // if the data is the intercept (bias)
-                        derivative_square_residual = -2.0 * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = -12.0 * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
                 }
@@ -151,25 +156,27 @@ fn main() {
 
                 if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
                     slope_intercept_trouve[y] = true;
+                    true_counter = true_counter + 1;
 
                     if y == 0 {
                         println!("\n\nfini de trouver le bon coéficient directeur de la droite de prediction  ! ");
                         println!("Le coéficient directeur : {}", slope_intercept[y]);
-                        true_counter = true_counter + 1;
                     }
 
                     if y == 1 {
                         println!("\n\nfini de trouver le bon intercept de la droite de prediction  ! ");
                         println!("L'intercept : {}", slope_intercept[y]);
-                        true_counter = true_counter + 1;
                     }
                 }
             }
         }
 
-        if true_counter == slope_intercept_trouve.len() {
-            break;
-        }
-        
+        // can't add the break here because there are the for loop which will
+        // go to the next type (weight or bias) of value
+        //if true_counter == slope_intercept_trouve.len() {
+        //    break;
+        //}
     }
+    
+    println!("\nl'équation de la droite de prédiction est : y = a{} + {}", slope_intercept[0], slope_intercept[1]);
 }

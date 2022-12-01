@@ -26,10 +26,10 @@ With the guest value of the slope ($\color{green}0$) and the intercept ($\color{
     <img src="images/begining.png" width="450"/>
 </p>
 
-The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y \color{green} _{\textrm{prediction line}}$ and $\color{blue} y  \color{red}_{given_-value}$ (the difference between $\textrm{\color{green}what the algorithm should \color{blue} find \color{red} from the given value}$ and $\textrm{\color{blue} the observed value \color{red} from the given value}$) ```for``` each samples:
+The goal of this algorithm is to change the position of the $\color{green} \textrm{prediction line}$ to minimize as much as possible the difference between $\color{blue} y  \color{red}_{given_-value}$ and $\color{blue} y \color{green}_{\textrm{prediction line}}$ (the difference between  $\textrm{\color{blue} the observed value \color{red}from the given value}$ and $\textrm{\color{green}what the algorithm should \color{blue}find \color{red}from the given value}$) ```for``` each samples:
 
 <p align="center">
-    <img src="images/substraction.png" width="450"/>
+    <img src="images/substraction-correction.png" width="450"/>
 </p>
 
 Now we know for each samples how much the $\color{green} \textrm{prediction line}$ fit to $\textrm{\color{blue}the observed value}$. 
@@ -41,25 +41,28 @@ ___
 Sometimes the $\color{green} \textrm{prediction line}$ may look like this:
 
 <p align="center">
-    <img src="images/note1.png" width="450"/>
+    <img src="images/note1-correction.png" width="450"/>
 </p>
 
-If we make the sum of the difference we will get: $$\textrm{sum} = -0.871 + 0.531 + (-0.135)$$ $$=> \textrm{sum} = -0.475$$
+If we make the sum of the difference we will get: $$\textrm{sum} = 0.871 + (-0.531) + 0.135$$ $$=> \textrm{sum} = 0.475$$
 
-But that doesn't make sense because the result is lower than the difference between $\color{green} 2.431$ and $\color{blue} 1.9$, which is $0.531$, adding the others differences lower it instead of increase it.
+But that doesn't make sense because the result is lower than the difference between $\color{blue} 1.4$ and $\color{green} 0.529$, which is $0.871$, adding the others differences lower it instead of increase it.
 
-The solution to this is to make sure the diffrences are positive by calculating the square of the negative one: $$\textrm{sum} = (-0.871)^2 + 0.531 + (-0.135)^2$$
+The solution to this is to make sure the diffrences are positive by calculating the square of the negative one: $$\textrm{sum} = 0.871 + (-0.531)^2 + 0.135$$
 
-But we also need to calculate the square of positive differences to keep a sense of proportionality between the differences: $$\textrm{sum of squares} = (-0.871)^2 + 0.531^2 + (-0.135)^2$$ $$=> \textrm{sum of squares} = 1.059$$
+But we also need to calculate the square of positive differences to keep a sense of proportionality between the differences: $$\textrm{sum of squares} = 0.871^2 + (-0.531)^2 + 0.135^2$$ $$=> \textrm{sum of squares} = 1.059$$
+
 <center><ins>End of the note</ins></center>
 
 ___
 
 The sum of square for the main exemple:
-$$\textrm{sum of squares} = (-1.4)^2 + (-1.9)^2 + (-3.2)^2$$ $$=> \textrm{sum of squares} = 15.81$$
+$$\textrm{sum of squares} = (1.4)^2 + (1.9)^2 + (3.2)^2$$ $$=> \textrm{sum of squares} = 15.81$$
 
 Now that we have the sum of square we can put it in another graph, a 3D one:
 
+
+But to keep the thing simple 
 
 
 $$\textrm{step size} = \textrm{sum of squares} * \textrm{learning rate}$$
@@ -68,8 +71,13 @@ $$\textrm{new value} = \textrm{value} - \textrm{step size}$$
 
 In a neural network...
 
-how to fit the line to the. data, least square
-
 ___
 <center><ins>Additional note:</ins></center>
 
+Vulues were the good intercept and slope are found (approximately):
+|$(x - y)^x$ only if x is even | Learning rate slope, weight | Learning rate intercept bias |
+|---|---|---|
+|$x = [2 ; 10]$| $0.01$ | $0.1$ |
+|$x = [12 ; Idk]$| $0.001$ | $0.01$ |
+||||
+||||
