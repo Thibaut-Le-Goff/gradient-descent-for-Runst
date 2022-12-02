@@ -34,7 +34,7 @@ fn main() {
     let mut step_size: f64;
     // The 
 
-    let slope_intercept_learning_rate: [f64; 2] = [0.001, 0.01];
+    let slope_intercept_learning_rate: [f64; 2] = [0.01, 0.1];
     // for 0 :
     // The multiplicator that will determine the step size when 
     // it's use to multiply sum_derivative_square_residual.
@@ -77,7 +77,9 @@ fn main() {
     // la ou sera stocké la taille prédite
     // par rapport à slope et intercept
 
-    for _i in 0..= try_number - 1 {
+    let mut number_end: usize = 0;
+
+    for i in 0..= try_number - 1 {
     // for each number of try
 
         // stop the algorihtm if the values has already been found
@@ -88,6 +90,7 @@ fn main() {
         for y in 0..= slope_intercept.len() - 1 {
 
             if true_counter == slope_intercept_trouve.len() {
+                //number_end = i;  false because will count unused try
                 break;
             }
 
@@ -132,13 +135,13 @@ fn main() {
                     if y == 0 {
                         // if the data is the slope (weights), there would be another 
                         // if to see in wich layer is the weight
-                        derivative_square_residual = (-12.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = (-10.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
 
                     if y == 1 {
                         // if the data is the intercept (bias)
-                        derivative_square_residual = -12.0 * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = -10.0 * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
                 }
@@ -176,7 +179,17 @@ fn main() {
         //if true_counter == slope_intercept_trouve.len() {
         //    break;
         //}
+
+        // need here anyway to avoid to use the others try available 
+        if true_counter == slope_intercept_trouve.len() {
+            number_end = i;
+            break;
+        }
     }
     
-    println!("\nl'équation de la droite de prédiction est : y = a{} + {}", slope_intercept[0], slope_intercept[1]);
+    if true_counter == slope_intercept_trouve.len() {
+        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", slope_intercept[0], slope_intercept[1]);
+        println!("L'algorithme a fait {} essaies pour trouver les bonnes données.", number_end + 1);
+        // + 1 because I want to count the first try which is with i = 0
+    }
 }
