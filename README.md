@@ -20,7 +20,7 @@ But the algorithm need some samples in order to have a grasp of how this line mu
 
 First, the algorithm will have a given initial guess, those are stored in ```slope_intercept```, there are initialised as two $\color{green}0$ but they can be others values like negative one or even randomly declared.
 
-With the guest value of the slope ($\color{green}0$) and the intercept ($\color{green}0$) the algorithm will create a $\color{green} \textrm{prediction line} $ on a xy axis. The algorithm will also put some dot which shows the three samples (peoples) on the axis with $\color{red} x = given_-value = weight$ and $\color{blue} y = observed_-value = height$:
+With the guest value of the slope ( $\color{green}0$ ) and the intercept ( $\color{green}0$ ) the algorithm will create a $\color{green}\textrm{prediction line}$ on a xy axis. The algorithm will also put some dot which shows the three samples (peoples) on the axis with $\color{red} x = given_-value = weight$ and $\color{blue} y = observed_-value = height$:
 
 <p align="center">
     <img src="images/begining.png" width="450"/>
@@ -59,11 +59,28 @@ ___
 The sum of square for the main exemple:
 $$\textrm{sum of squares} = (1.4)^2 + (1.9)^2 + (3.2)^2$$ $$=> \textrm{sum of squares} = 15.81$$
 
-Now that we have the sum of square we can put it in another graph, a 3D one:
+Now that we have the $\textrm{sum of squares}$ from the given $\textrm{Slope}$, which is $\color{green} 0$, we can put it in another graph:
 
+[image]
 
-But to keep the thing simple 
+___
+<center><ins>Note</ins></center>
 
+In the calculation of the Gradient descent the $\textrm{Slope}$ and the $\textrm{Intercept}$ of the $\color{green} \textrm{prediction line}$ will both influence the way the $\color{green} \textrm{line}$ fit to $\textrm{\color{blue}the observed values}$.
+
+To be efficient we need to calculate the $\textrm{sum of squares}$ with respect to the $\textrm{Slope}$ and the $\textrm{Intercept}$ separately.
+
+<center><ins>End of the note</ins></center>
+
+___
+
+As mentioned before we want to reduce as much as possible the sum of the differences between $\textrm{\color{blue} the observed values \color{red}from the given values}$ and $\textrm{\color{green}what the algorithm should \color{blue}find \color{red}from the given values}$ which is: $\textrm{sum of squares}$.
+
+To know which $\textrm{sum of squares}$ is the nearest to $0$ we have to take account of the others:
+
+[image]
+
+Here 
 
 $$\textrm{step size} = \textrm{sum of squares} * \textrm{learning rate}$$
 
@@ -74,7 +91,7 @@ In a neural network...
 ___
 <center><ins>Additional note:</ins></center>
 
-Values were the good intercept and slope are found (approximately):\
+Values were the good intercept and slope are found (approximately):
 
 (note: the prediction line found by Josh is: $y = a0.64 + 0.95$)
 |$(o - p)^x$ only if x is even | Learning rate slope, weight | Learning rate intercept, bias | number of try | prediction line |
