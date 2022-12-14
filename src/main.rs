@@ -116,6 +116,7 @@ fn main() {
     let mut step_size: f32;
     // The 
 
+    let power_dif : f32 = 2.0;
     let slope_intercept_learning_rate: [f32; 2] = [0.01, 0.1];
     // for 0 :
     // The multiplicator that will determine the step size when 
@@ -215,13 +216,13 @@ fn main() {
                     if y == 0 {
                         // if the data is the slope (weights), there would be another 
                         // if to see in wich layer is the weight
-                        derivative_square_residual = (-2.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = (-power_dif * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
 
                     if y == 1 {
                         // if the data is the intercept (bias)
-                        derivative_square_residual = -2.0 * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = -power_dif * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
                 }

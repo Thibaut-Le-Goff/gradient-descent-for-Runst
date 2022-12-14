@@ -1,13 +1,13 @@
 fn main() {
     // from : https://www.youtube.com/watch?v=sDv4f4s2SB8&t
 
-    const OBSERVED_HEIGHT: [f64; 3] = [1.4, 1.9, 3.2];
+    const OBSERVED_HEIGHT: [f32; 3] = [1.4, 1.9, 3.2];
     // The height of the three people, the height 
     // is the data we want to predicte from those
     // three samples, who is what we would expecte 
     // from the three inputs, the weights.
 
-    const WEIGHT: [f64; 3] = [0.5, 2.3, 2.9];
+    const WEIGHT: [f32; 3] = [0.5, 2.3, 2.9];
     // Their weight, this is the inputs of 
     // the gradient descent.
     // Since each weight gives one height
@@ -25,16 +25,17 @@ fn main() {
     // found or not
     let mut true_counter: usize = 0;
     
-    let precision_success: f64 = 0.001;
+    let precision_success: f32 = 0.001;
     // The programme will stop once the derivative of the sum 
     // of square of the difference between the observed data 
     // and the predicted one is between precision_success and 
     // its negative
 
-    let mut step_size: f64;
+    let mut step_size: f32;
     // The 
 
-    let slope_intercept_learning_rate: [f64; 2] = [0.01, 0.1];
+    let power_dif : f32 = 2.0;
+    let slope_intercept_learning_rate: [f32; 2] = [0.01, 0.1];
     // for 0 :
     // The multiplicator that will determine the step size when 
     // it's use to multiply sum_derivative_square_residual.
@@ -47,8 +48,8 @@ fn main() {
     // The step size calaculated is to create the next value of
     // the intercept of the prediction line.
 
-    let mut sum_derivative_square_residual: f64;
-    let mut derivative_square_residual: f64;
+    let mut sum_derivative_square_residual: f32;
+    let mut derivative_square_residual: f32;
     // la somme des dérivés du carré de la différence 
     // entre la valeur observé et celle attendue
     // pour le calcule du coéficient directeur de la
@@ -64,7 +65,7 @@ fn main() {
     // </brouilon>
 
 
-    let mut slope_intercept: [f64; 2] = [0.0, 0.0];
+    let mut slope_intercept: [f32; 2] = [0.0, 0.0];
     // pour 0:
     // valeur de départ du coéficient directeur de la courbe
     // des prédictions
@@ -73,7 +74,7 @@ fn main() {
     // valeur de départ de l'intercept de la courbe
     // des prédictions
 
-    let mut predicted_height: f64;
+    let mut predicted_height: f32;
     // la ou sera stocké la taille prédite
     // par rapport à slope et intercept
 
@@ -135,13 +136,13 @@ fn main() {
                     if y == 0 {
                         // if the data is the slope (weights), there would be another 
                         // if to see in wich layer is the weight
-                        derivative_square_residual = (-10.0 * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = (-power_dif * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
 
                     if y == 1 {
                         // if the data is the intercept (bias)
-                        derivative_square_residual = -10.0 * (OBSERVED_HEIGHT[j] - predicted_height);
+                        derivative_square_residual = -power_dif * (OBSERVED_HEIGHT[j] - predicted_height);
                         sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                     }
                 }
