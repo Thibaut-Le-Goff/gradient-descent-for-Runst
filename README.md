@@ -94,18 +94,94 @@ In Josh's video about gradient descent(link in the introduction) the number to r
 
 If we want to reduce the number of tests to guess the $\textrm{\color{green}Slope}$ we would need another variable to build a logic, a variable that would change in the same direction as long as we are approaching the good value of the $\textrm{\color{green}Slope}$.
 
-This variable is the $\textrm{\color{blue}sum}$ of the derivatives $\textrm{\color{blue}of Squares (calculated from de the differences)}$:
+This variable is the derivative of the $\textrm{\color{blue}sum of squares}$ with respect to the $\textrm{\color{green}Slope}$:
+
 <p align="center">
     <img src="images/derivative.png" width="350"/>
 </p>
 
+Here we can see the lowest value of the $\textrm{\color{blue}Sum of Squares}$, the value we are aiming for in order to find the good value of the $\textrm{\color{green}Slope}$, with a derivative of $\color{red}0$.
+And we can see the derivative of the $\textrm{\color{blue}Sum of Squares}$ approaching $\color{red}0$ as long as we are reaching the value of the $\textrm{\color{green}Slope}$ we want.
 
-$$\textrm{step size} = \textrm{sum of squares} * \textrm{learning rate}$$
+That mean more the derivative is far from $\color{red}0$ more the "size of the step" we will take to try calculating the next value of $\textrm{\color{blue}Sum of Squares}$ with respect to the $\textrm{\color{green}Slope}$ can be large:
 
-$$\textrm{new value} = \textrm{value} - \textrm{step size}$$
+With the current exemple:
+___
+<center><ins>Note</ins></center>
 
-In a neural network...
+Here a recape before calculating the derivative of $\textrm{\color{blue}Sum of Squares}$:
 
+To calculate the $\textrm{\color{blue}Sum of Squares}$ we did:
+
+$$\textrm{\color{blue}Sum of Squares} = (1.4)^2 + (1.9)^2 + (3.2)^2$$ 
+This came from:
+$$\textrm{\color{blue}Sum of Squares} = (\color{red}1.4 \color{black} - \color{green}0 \color{black})^2 + (\color{red}1.9 \color{black}- \color{green}0\color{black})^2 + (\color{red}3.2 - \color{green}0\color{black})^2$$ 
+
+In a more generale way:
+
+$$\textrm{\color{blue}Sum of Squares} = \sum\limits_{i=1}^N (\textrm{\color{blue}the observed value y}_i \textrm{ \color{red}from the given value x}_i - \textrm{\color{green}the value y}_i \textrm{ \color{green}the algorithm should \color{blue}find \color{red}from the given value x}_i)^2$$
+
+$\sum\limits_{i=1}^N x_i=>$ The sum of every $x$ elements (like calculations) from the first $i$, here $i = 1$, until $i = N$, $i$ increas of $1$ every $x$ elements. In programing it gives something like: 
+
+```rust
+for i in 1..= N {
+    x = // can be any calculation that involve i
+    sum = x + sum;
+}
+``` 
+
+But if $i$ is use to manipulate an array its better to shift everything by one because an array start with the number $0$:
+
+```rust
+for i in 0..= N - 1 {
+    x = // can be any calculation that involve i
+    sum = x + sum;
+}
+```
+
+$N => \textrm{Number of samples}$
+$i => \textrm{Number of the first sample}$
+$\textrm{\color{blue}the observed value y}_i \textrm{ \color{red}from the given value x}_i =>$ this value is known as the value $\color{blue} y$ of the observed sample$_i$
+$\textrm{\color{green}the value y}_i \textrm{ \color{green}the algorithm should \color{blue}find \color{red}from the given value x}_i =>$ this value is calculated by the algorithm with the $\color{green} \textrm{prediction line}$ which formula is $\color{green}y = slope * x + intercept$.
+$^2 =>$ We need a positive value. 
+
+With those info we can rewrite the formula of $\textrm{\color{blue}Sum of Squares}$:
+
+$$\textrm{\color{blue}Sum of Squares} = \sum\limits_{i=1}^N (\textrm{\color{blue}observed sample}_i - \color{green}slope * x_i + intercept\color{black})^2$$
+
+But as $\sum$ expresse just a sumation and considering the fact that  the $\textrm{\color{blue}sum}$ of the derivatives $\textrm{\color{blue}of Squares}$ with respect to the $\textrm{\color{green}Slope (or intercept)}$ is the same as the derivative of the $\textrm{\color{blue}sum of squares}$ with respect to the $\textrm{\color{green}Slope (or intercept)}$, we can conclud this symbole is not usefull to calculate the dérivative:
+
+$$\textrm{\color{blue}Square} = (\textrm{\color{blue}observed sample} - \color{green}slope * x + intercept\color{black})^2$$
+
+We will calculat the dérivatives of the $\textrm{\color{blue}Squares}$ from this formula and make the sum of them to get the derivative of the $\textrm{\color{blue}Sum of Squares}$.
+
+<center><ins>End of the note</ins></center>
+
+___
+
+Here is the math to calculat the derivative of $\textrm{\color{blue}Square}$ with respect to the $\textrm{\color{green}Slope}$:
+
+We can't do it directly, we have to use the chain rule taking note that the $\textrm{\color{green}Slope}$ incluence the $\color{red} \textrm{\color{red}Prediction line}$ who influence the $\color{blue}Square$.
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Slope} = \frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} * \frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope}$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} => \color{blue}Square \color{black} = (\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black}))^2$$
+
+$$=> \color{blue}Square \color{black} = (\textrm{\color{blue}observed sample} + (\color{green}-1 * \textrm{\color{red}Prediction line} \color{black}))^2$$
+
+$$=> 2*(\textrm{\color{blue}observed sample} + (\color{green}-1 * \textrm{\color{red}Prediction line} \color{black}))$$
+
+Since the derivative is with respect to the $\textrm{\color{red}Prediction line}$:
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} =  2*(\textrm{\color{blue}observed sample} + (\color{green}-1 *  \textrm{\color{red}Prediction line} \color{black}))\color{green}* -1$$
+
+$$=> \color{green}-1 * 2*(\textrm{\color{blue}observed sample} + (\color{green}-1 *  \textrm{\color{red}Prediction line} \color{black}))$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} = \color{green}-2*(\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black})$$
+
+And:
+
+$$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} => \textrm{\color{red}Prediction line} = \color{green} Slope \color{black} * x + intercept$$
 ___
 <center><ins>Additional note:</ins></center>
 
