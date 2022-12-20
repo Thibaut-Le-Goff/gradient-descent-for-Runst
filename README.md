@@ -140,9 +140,13 @@ for i in 0..= N - 1 {
 ```
 
 $N => \textrm{Number of samples}$
+
 $i => \textrm{Number of the first sample}$
-$\textrm{\color{blue}the observed value y}_i \textrm{ \color{red}from the given value x}_i =>$ this value is known as the value $\color{blue} y$ of the observed sample$_i$
+
+$\textrm{\color{blue}the observed value y}_i \textrm{ \color{red}from the given value x}_i =>$ this value is known as the value $\color{blue} y$ of the observed sample $_i$
+
 $\textrm{\color{green}the value y}_i \textrm{ \color{green}the algorithm should \color{blue}find \color{red}from the given value x}_i =>$ this value is calculated by the algorithm with the $\color{green} \textrm{prediction line}$ which formula is $\color{green}y = slope * x + intercept$.
+
 $^2 =>$ We need a positive value. 
 
 With those info we can rewrite the formula of $\textrm{\color{blue}Sum of Squares}$:
@@ -182,6 +186,79 @@ $$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Pre
 And:
 
 $$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} => \textrm{\color{red}Prediction line} = \color{green} Slope \color{black} * x + intercept$$
+
+Note: Here $x$ is the $\textrm{\color{red}given value}$, the $\textrm{\color{red}weight}$.
+
+$$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} = \textrm{\color{red}given value}$$
+
+Finally:
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Slope} = \frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} * \frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope}$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Slope} = \color{green}-2*(\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black}) * \textrm{\color{red}given value}$$
+
+$$= \color{green}-2\textrm{\color{red}given value} * (\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black})$$
+
+Note: for $\textrm{\color{blue}observed sample}$ and $\textrm{\color{red}Prediction line}$ we are using their $y$ value to calculate the differences:
+
+<p align="center">
+    <img src="images/substraction-correction.png" width="450"/>
+</p>
+
+With the samples of the example :
+
+$$\textrm{\color{blue} derivative square}_1 \color{black} = -2 * \color{red}0.5 \color{black} * (\color{blue}1.4 - \color{green}0 \color{black})$$
+
+$$= -1 * 1.4$$
+
+$$= -1.4$$
+
+$$\textrm{\color{blue} derivative square}_2 \color{black} = -2 * \color{red}2.3 \color{black} * (\color{blue}1.9 - \color{green}0 \color{black})$$
+
+$$= -4.6 * 1.9$$
+
+$$= -8.74$$
+
+$$\textrm{\color{blue} derivative square}_3 \color{black} = -2 * \color{red}2.9 \color{black} * (\color{blue}3.2 - \color{green}0 \color{black})$$
+
+$$= -5.8 * 3.2$$
+
+$$= -18.56$$
+
+$$\textrm{\color{blue} sum derivatives squares} \color{black} = -1.4 + (-8.74) + (-18.56)$$
+
+$$= -28.7$$
+
+The goal is to find a way to decreas this value until it's reach $0$ as much as we declared it in the variable ```precision_success```, 0.001.
+
+The $\textrm{\color{blue} sum derivatives squares}$ tells us how much we are fram for it but also how much we can move forward in order to reach it.
+
+But $-28.7$ is a value too big compared to the values of the samples and the potential good $\color{green} Slope$, this is even more important since we want to guess a values very sensitive to changes.
+
+This why there is something caled $\textrm{Learning rate}$ which goal is to lower the value given by the $\textrm{\color{blue} sum derivatives squares}$, for the $\color{green} Slope$ the $\textrm{Learning rate}$ is set to $0.01$:
+
+$$\textrm{Step size} = \textrm{\color{blue} sum derivatives squares} * \textrm{Learning rate}$$
+
+$$= -28.7 * 0.01$$
+
+$$= -0.287$$
+
+Now we know how much we have to change the value of the $\color{green} Slope$ to make the $\textrm{\color{green}Prediction line}$ fit a little more to the samples.
+
+But should we add the $\textrm{Step size}$ to the $\color{green} Slope$ or substract it?
+
+For now, the $\textrm{\color{green}Prediction line}$ is here:
+
+<p align="center">
+    <img src="images/prediction_line.png" width="450"/>
+</p>
+
+If we want the $\textrm{\color{green}Prediction line}$ to fit a little more to the samples we need to raise the $\color{green} Slope$
+
+```rust
+slope_intercept[y] = slope_intercept[y] - step_size;
+println!("La nouvelle valeur : {}", slope_intercept[y]);
+```
 ___
 <center><ins>Additional note:</ins></center>
 
