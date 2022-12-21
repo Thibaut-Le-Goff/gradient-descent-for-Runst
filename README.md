@@ -1,4 +1,4 @@
-<center><h2><ins>Gradient-descent-for-Runst</ins></h2></center>
+ <center><h2><ins>Gradient-descent-for-Runst</ins></h2></center>
 
 The program here is the adaptation of Josh Starmer's video:
 [![here](https://img.youtube.com/vi/sDv4f4s2SB8&t/0.jpg)](https://www.youtube.com/watch?v=sDv4f4s2SB8&t)
@@ -187,6 +187,8 @@ And:
 
 $$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} => \textrm{\color{red}Prediction line} = \color{green} Slope \color{black} * x + intercept$$
 
+$$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} = x$$
+
 Note: Here $x$ is the $\textrm{\color{red}given value}$, the $\textrm{\color{red}weight}$.
 
 $$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Slope} = \textrm{\color{red}given value}$$
@@ -207,19 +209,25 @@ Note: for $\textrm{\color{blue}observed sample}$ and $\textrm{\color{red}Predict
 
 With the samples of the example :
 
-$$\textrm{\color{blue} derivative square}_1 \color{black} = -2 * \color{red}0.5 \color{black} * (\color{blue}1.4 - \color{green}0 \color{black})$$
+$$\textrm{\color{blue} derivative square}_1 \color{black} = -2 * \color{red}0.5 \color{black} * (\color{blue}1.4 - (\color{green}0 * \color{red}0.5\color{green} + 0 \color{black}))$$
+
+$$= -2 * \color{red}0.5 \color{black} * (\color{blue}1.4 - \color{green}0 \color{black})$$
 
 $$= -1 * 1.4$$
 
 $$= -1.4$$
 
-$$\textrm{\color{blue} derivative square}_2 \color{black} = -2 * \color{red}2.3 \color{black} * (\color{blue}1.9 - \color{green}0 \color{black})$$
+$$\textrm{\color{blue} derivative square}_2 \color{black} = -2 * \color{red}2.3 \color{black} * (\color{blue}1.9 - (\color{green}0 * \color{red}2.3\color{green} + 0 \color{black}))$$
+
+$$= -2 * \color{red}2.3 \color{black} * (\color{blue}1.9 - \color{green}0 \color{black})$$
 
 $$= -4.6 * 1.9$$
 
 $$= -8.74$$
 
-$$\textrm{\color{blue} derivative square}_3 \color{black} = -2 * \color{red}2.9 \color{black} * (\color{blue}3.2 - \color{green}0 \color{black})$$
+$$\textrm{\color{blue} derivative square}_3 \color{black} = -2 * \color{red}2.9 \color{black} * (\color{blue}3.2 - (\color{green}0 * \color{red}2.9\color{green} + 0 \color{black}))$$
+
+$$= -2 * \color{red}2.9 \color{black} * (\color{blue}3.2 - \color{green}0 \color{black})$$
 
 $$= -5.8 * 3.2$$
 
@@ -253,12 +261,119 @@ For now, the $\textrm{\color{green}Prediction line}$ is here:
     <img src="images/prediction_line.png" width="450"/>
 </p>
 
-If we want the $\textrm{\color{green}Prediction line}$ to fit a little more to the samples we need to raise the $\color{green} Slope$
+If we want the $\textrm{\color{green}Prediction line}$ to fit a little more to the samples we need to raise the $\color{green} Slope$.
 
-```rust
-slope_intercept[y] = slope_intercept[y] - step_size;
-println!("La nouvelle valeur : {}", slope_intercept[y]);
-```
+Since $\textrm{\color{blue} sum derivatives squares}$, $-0.287$, is negative we can't make an addition:
+
+$$\textrm{\color{green}new Slope} = \textrm{current Slope} - \textrm{\color{blue} sum derivatives squares}$$
+
+$$= 0 - (-0.287)$$
+
+$$= 0 + 0.287$$
+
+$$= 0.287$$
+
+___
+
+<center><ins>Note</ins></center>
+
+This also work if the value of $\textrm{\color{blue} sum derivatives squares}$ is positive, that would mean the $\color{green} Slope$ is too high:
+
+<p align="center">
+    <img src="images/slope_too_high.png" width="350"/>
+</p>
+
+<p align="center">
+    <img src="images/slope_too_high_samples.png" width="450"/>
+</p>
+
+In that case we would like to lower the $\color{green} Slope$:
+
+$$\textrm{\color{green}new Slope} = \textrm{current Slope} - \textrm{\color{blue} sum derivatives squares}$$
+
+<center><ins>End of the note</ins></center>
+
+___
+
+We have the the new value of the $\color{green} Slope$ which is $0.287$.
+Before guessing the next value of the $\color{green} Slope$, need to try to guesse the next value the $\color{green}Intercept$ would be.
+
+First we calculate the $\textrm{\color{blue}sum derivatives squares}$ with respect to the $\color{green}Intercept$ but before we have to apply the chain rule:
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Intercept} = \frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} * \frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Intercept}$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} => \color{blue}Square \color{black} = (\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black}))^2$$
+
+$$=> \color{blue}Square \color{black} = (\textrm{\color{blue}observed sample} + (\color{green}-1 * \textrm{\color{red}Prediction line} \color{black}))^2$$
+
+$$=> 2*(\textrm{\color{blue}observed sample} + (\color{green}-1 * \textrm{\color{red}Prediction line} \color{black}))$$
+
+Since the derivative is with respect to the $\textrm{\color{red}Prediction line}$:
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} =  2*(\textrm{\color{blue}observed sample} + (\color{green}-1 *  \textrm{\color{red}Prediction line} \color{black}))\color{green}* -1$$
+
+$$=> \color{green}-1 * 2*(\textrm{\color{blue}observed sample} + (\color{green}-1 *  \textrm{\color{red}Prediction line} \color{black}))$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} = \color{green}-2*(\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black})$$
+
+And:
+
+$$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Intercept} => \textrm{\color{red}Prediction line} = \color{black} slope  * x + \color{green}Intercept$$
+
+$$=> \textrm{\color{red}Prediction line} = \color{black} slope  * x + \color{blue} 1 *\color{green}Intercept$$
+
+$$\frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Intercept} = \color{blue} 1$$
+
+Finally:
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Intercept} = \frac{\partial \color{blue}Square}{\partial \color{red} \textrm{\color{red}Prediction line}} * \frac{\partial \textrm{\color{red}Prediction line}}{\partial \color{green} Intercept}$$
+
+$$\frac{\partial \color{blue}Square}{\partial \color{green} Intercept} = \color{green}-2*(\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black}) * \color{blue} 1$$
+
+$$= \color{green}-2 * \color{blue} 1 * (\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black})$$
+
+$$= \color{green}-2 * (\textrm{\color{blue}observed sample} - \textrm{\color{red}Prediction line} \color{black})$$
+
+We can now calculate the $\textrm{\color{blue}sum derivatives squares}$:
+Note: the $\color{green} Slope$ is set to $0.287$.
+
+$$\textrm{\color{blue} derivative square}_1 \color{black} = -2 * (\color{blue}1.4 - (\color{green}0.287 * \color{red}0.5\color{green} + 0 \color{black}))$$
+
+$$= -2 * \color{black} (\color{blue}1.4 - \color{green}0.1435 \color{black})$$
+
+$$= -2 * 1.2565$$
+
+$$= -2.513$$
+
+$$\textrm{\color{blue} derivative square}_2 \color{black} = -2 * (\color{blue}1.9 - (\color{green}0.287 * \color{red}2.3\color{green} + 0 \color{black}))$$
+
+$$= -2\color{black} * (\color{blue}1.9 - \color{green}0.6601 \color{black})$$
+
+$$= -2 * 1.2399$$
+
+$$= -2.4798$$
+
+$$\textrm{\color{blue} derivative square}_3 \color{black} = -2 * (\color{blue}3.2 - (\color{green}0.287 * \color{red}2.9\color{green} + 0 \color{black}))$$
+
+$$= -2\color{black} * (\color{blue}3.2 - \color{green}0,8323 \color{black})$$
+
+$$= -2 * 2.3677$$
+
+$$= -4.7354$$
+
+$$\textrm{\color{blue} sum derivatives squares} \color{black} = -2.513 + (-2.4798) + (-4.7354)$$
+
+$$= -9.7282$$
+
+Then we use a $\textrm{Learning rate}$ to lower a bit the value, but not as much as we did for the $\color{green} Slope$ since the $\color{green}Intercept$ is less sensitive to change:
+
+$$\textrm{Step size} = \textrm{\color{blue} sum derivatives squares} * \textrm{Learning rate}$$
+
+$$= -9.7282 * 0.1$$
+
+$$= -0.97282$$
+
+
 ___
 <center><ins>Additional note:</ins></center>
 
@@ -270,4 +385,3 @@ Values were the good intercept and slope are found (approximately):
 |$x = [Idk ; 0.8]$|$0.1$|$1$|$$x = 0.4 => 29$$ $$x = 0.6 => 15$$ $$x = 0.8 => 11$$|$$x = 0.4 => y = a0.6386308534601578 + 0.9544203978150603$$ $$x = 0.6 => y = a0.6420059745625867 + 0.9463511756319674$$ $$x = 0.8 => y = a0.6413166642652045 + 0.9480095319636368$$|
 |$x = [0.8 ; 10]$| $0.01$ | $0.1$ | $$x = 0.8 => 260$$ $$x = 2 => 108$$ $$x = 4 => 45$$ $$x = 6 => 22$$ $$x = 8 => 14$$ $$x = 10 => 76$$| $$x = 0.8 => y = a0.6388851834359309 + 0.9537779471330741$$ $$x = 2 => y = a0.6402976217775229 + 0.9504417536953271$$ $$x = 4 => y = a0.6407941148661322 + 0.9492692569668632$$ $$x = 6 => y = a0.6411193057119328 + 0.9484918184754438$$ $$x = 8 =>  y = a0.6410162537466007 + 0.9487414252781016$$ $$x = 10 => y = a0.6412632970776748 + 0.9481394245821886$$|
 |$x = [4 ; Idk]$| $0.001$ | $0.01$ | $$x = 74 => 17$$ $$x = 76 => 13$$ $$x = 78 => 15$$| $$x = 74 => y = a0.6410281505131493 + 0.9487118147668387$$ $$x = 76 => y = a0.6410259248302264 + 0.9487172715442852$$ $$x = 78 => y = a0.6410264020927565 + 0.9487161255313094$$|
-
