@@ -373,6 +373,25 @@ $$= -9.7282 * 0.1$$
 
 $$= -0.97282$$
 
+And finally we use the $\textrm{Step size}$ to calculate the new calue of the $\color{green}Intercept$:
+
+$$\textrm{\color{green}new Intercept} = \textrm{current Intercept} - \textrm{\color{blue} sum derivatives squares}$$
+
+$$= 0 - (-0.97282)$$
+
+$$= 0 + 0.97282$$
+
+$$= 0.97282$$
+
+The new formula of the $\textrm{\color{red}Prediction line}$ is now:
+$$y = 0.287x + 0.97282$$
+
+And we use this new $\textrm{\color{red}Prediction line}$ to repeat the process again and again until the $\textrm{\color{blue} sum derivatives squares}$ with respect to the $\color{green}Slope$ and the $\textrm{\color{blue} sum derivatives squares}$ with respect to the $\color{green}Intercept$ are both as near to $0$ as we wante, in the code the limit is set to $0.001$.
+
+Here is a little gif to show the process in action:
+<p align="center">
+    <img src="images/gradient_descent.gif" width="500"/>
+</p>
 
 ___
 <center><ins>Additional note:</ins></center>
