@@ -1,6 +1,6 @@
 use plotters::prelude::*;
 
-pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, prediction_line_dot: Vec<(f32, f32)>, x_y_min_max_graph: [f32; 4], i: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min_max_graph: [f32; 4], i: usize) -> Result<(), Box<dyn std::error::Error>> {
     // send the result of the function in a result containing:
     //  - the result in case of succes = ()
     //  - a box (a pointer but its keeps ownership, in short)
@@ -9,13 +9,15 @@ pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, predict
    
     //let mut chart_builder = ChartBuilder::on(&drawing_area);
 
+    let prediction_line_dot: Vec<(f32, f32)> = prediction_line.clone();
+
     let tittle: String = format!("graphs/gradient_descent-graph-number-{}.jpeg", i);
 
     let root = BitMapBackend::new(&tittle, (1280, 960)).into_drawing_area();
     root.fill(&WHITE);
 
     //determine the size between the chart and the end of the image
-    let root = root.margin(20, 20, 20, 30);
+    let root = root.margin(60, 60, 60, 200);
 
     let tittle_chart: String = format!("Gradient descent, try number {}", i);
     // After this point, we should be able to draw construct a chart context
@@ -94,13 +96,13 @@ fn main() {
 
     // from : https://www.youtube.com/watch?v=sDv4f4s2SB8&t
 
-    const OBSERVED_HEIGHT: [f32; 3] = [1.4, 1.9, 3.2];
+    const OBSERVED_HEIGHT: [f32; 4] = [2.4, -1.9, 0.2, -5.0];
     // The height of the three people, the height 
     // is the data we want to predicte from those
     // three samples, who is what we would expecte 
     // from the three inputs, the weights.
 
-    const WEIGHT: [f32; 3] = [0.5, 2.3, 2.9];
+    const WEIGHT: [f32; 4] = [4.0, -3.5, 2.3, -1.9];
     // Their weight, this is the inputs of 
     // the gradient descent.
     // Since each weight gives one height
@@ -117,7 +119,8 @@ fn main() {
     }
 
     ///// To determine the length of the prediction ligne on the x and y axis: ////////////////
-    let mut x_y_min_max: [f32; 4] = [0.0; 4];
+    let mut x_y_min_max: [f32; 4] = [WEIGHT[0]; 4];
+    //let mut x_y_min_max: [f32; 4] = [0.0; 4];
     
     // determine what are the min and max values in the samples, on the xy axis
     for i in 0..= samples.len() - 1 {
@@ -136,10 +139,24 @@ fn main() {
     }
 
     ///// To determine the length of the graph on the x and y axis: ////////////////
+    
     let mut x_y_min_max_graph: [f32; 4] = [0.0; 4];
 
-    for i in 0..= x_y_min_max.len() - 1 {
-        x_y_min_max_graph[i] = x_y_min_max[i] * 1.5;
+    for i in 0..x_y_min_max.len() {
+        /*
+        // if value is max
+        //if i == 1 || i == 3 {
+        if x_y_min_max[i] < 0.0 {
+            x_y_min_max_graph[i] = x_y_min_max[i] * 1.5;
+        }
+        // if value is min
+        //if i == 0 || i == 2 {
+        if x_y_min_max[i] >= 0.0 {
+            x_y_min_max_graph[i] = x_y_min_max[i] * 1.5;
+        }
+        */
+
+        x_y_min_max_graph[i] = x_y_min_max[i];
     }
     
     ////////////////////////////////////////////////////////////
@@ -159,6 +176,8 @@ fn main() {
     // of square of the difference between the observed data 
     // and the predicted one is between precision_success and 
     // its negative
+
+    let try_nb_bettween_graphs: usize = 100;
 
     let mut step_size: f32;
     // The 
@@ -215,7 +234,7 @@ fn main() {
         
     //let tittle: Box<String> = Box::new(format!("graphs/gradient_descent-graph-number-0.jpeg"));
 
-    graph((samples).to_vec(), (prediction_line).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, 0).ok();
+    graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, 0).ok();
 
     ///////////////////////////////////
 
@@ -320,10 +339,22 @@ fn main() {
         }
 
         ////////////////// Graphic ///////////////////////
-        if (i + 1) % 10 == 0 {
+        if (i + 1) % try_nb_bettween_graphs == 0 {
             let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
+            ///// To determine the length of the graph on the x and y axis: ////////////////
+            //let mut x_y_min_max_graph: [f32; 4] = [0.0; 4];
             
-            graph((samples).to_vec(), (prediction_line).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, i+1).ok();
+            /* 
+            for i in 0..= x_y_min_max_graph.len() - 1 {
+                match i {
+                    0 => {x_y_min_max_graph[0] = prediction_line[0].0 * prediction_line[0].0.exp();},
+                    1 => {x_y_min_max_graph[1] = prediction_line[0].1 * prediction_line[0].1.exp();},
+                    2 => {x_y_min_max_graph[2] = prediction_line[1].0 * prediction_line[1].0.exp();},
+                    3 => {x_y_min_max_graph[3] = prediction_line[1].1 * prediction_line[1].1.exp();},
+                }
+            }*/
+
+            graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, i+1).ok();
         }
         /////////////////////////////////////////////////////
     }
@@ -336,13 +367,13 @@ fn main() {
         //////////////////// Graphic ////////////////
         let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
             
-        graph((samples).to_vec(), (prediction_line).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, number_end+1).ok();
+        graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, number_end + 1).ok();
         //////////////////////////////////////////
         
         //// Creation of the gif ////////////
         Command::new("convert")
             .arg("-delay")
-            .arg("250")
+            .arg("200")
             .arg("-loop")
             .arg("0")
             .arg("graphs/*.jpeg")
