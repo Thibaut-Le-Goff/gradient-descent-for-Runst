@@ -1,25 +1,32 @@
 use plotters::prelude::*;
 
-pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min_max_graph: [f32; 4], i: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min_max: [f32; 4], i: usize) -> Result<(), Box<dyn std::error::Error>> {
     // send the result of the function in a result containing:
     //  - the result in case of succes = ()
     //  - a box (a pointer but its keeps ownership, in short)
-
-    //let samples: Vec<(f32, f32)> = vec![(1.0, 3.3), (2., 2.1), (3., 1.5), (4., 1.9), (5., 1.0)];
    
-    //let mut chart_builder = ChartBuilder::on(&drawing_area);
-
     let prediction_line_dot: Vec<(f32, f32)> = prediction_line.clone();
 
-    let tittle: String = format!("graphs/gradient_descent-graph-number-{}.jpeg", i);
+    let tittle: String;
+
+    if i < 10 {
+        tittle = format!("graphs/gradient_descent-graph-number-000{}.jpeg", i);
+    } else if i < 100 {
+        tittle = format!("graphs/gradient_descent-graph-number-00{}.jpeg", i);
+    } else if i < 1000 {
+        tittle = format!("graphs/gradient_descent-graph-number-0{}.jpeg", i);
+    } else {
+        tittle = format!("graphs/gradient_descent-graph-number-{}.jpeg", i);
+    };
 
     let root = BitMapBackend::new(&tittle, (1280, 960)).into_drawing_area();
-    root.fill(&WHITE);
+    root.fill(&WHITE)?; // ? == warn if there is an error (if I understood what error propagation is)
 
     //determine the size between the chart and the end of the image
     let root = root.margin(60, 60, 60, 200);
-
+    
     let tittle_chart: String = format!("Gradient descent, try number {}", i);
+
     // After this point, we should be able to draw construct a chart context
     let mut chart = ChartBuilder::on(&root)
         // Set the caption of the chart
@@ -29,7 +36,7 @@ pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min
         .x_label_area_size(20)
         .y_label_area_size(40)
         // length of values of the x and y axis
-        .build_cartesian_2d(x_y_min_max_graph[0]..x_y_min_max_graph[1], x_y_min_max_graph[2]..x_y_min_max_graph[3])?;
+        .build_cartesian_2d(x_y_min_max[0]..x_y_min_max[1], x_y_min_max[2]..x_y_min_max[3])?;
 
     // Then we can draw a mesh
     // configuration du quadrillage
@@ -49,19 +56,16 @@ pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min
 
     // And we can draw something in the drawing area
     // put the red line 
-    //let samples: Vec<(f32, f32)> = vec![(1.0, 3.3), (2., 2.1), (3., 1.5), (4., 1.9), (5., 1.0)];
     chart.draw_series(LineSeries::new(
         prediction_line,
-        //vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])],
-        //chart_context.draw_series(LineSeries::new(data, BLACK)).unwrap()
-        &GREEN,
+        GREEN,
     ))?;
     // Similarly, we can draw point series
 
     chart.draw_series(PointSeries::of_element(
         prediction_line_dot,
         5,
-        &GREEN,
+        GREEN,
         &|c, s, st| {
             return EmptyElement::at(c)    // We want to construct a composed element on-the-fly
             + Circle::new((0,0),s,st.filled()) // At this point, the new pixel coordinate is established
@@ -73,7 +77,7 @@ pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min
     chart.draw_series(PointSeries::of_element(
         samples,
         5,
-        &BLACK,
+        BLACK,
         &|c, s, st| {
             return EmptyElement::at(c)    // We want to construct a composed element on-the-fly
             + Circle::new((0,0),s,st.filled()) // At this point, the new pixel coordinate is established
@@ -81,31 +85,40 @@ pub fn graph(samples: Vec<(f32, f32)>, prediction_line: Vec<(f32, f32)>, x_y_min
         },
     ))?;
     root.present()?;
+
     Ok(())
 }
-
-
 
 
 ////////// ALGORITM  GRADIENT DESCENT ////////////
 
 fn main() {
-
     // to create the gif, we have to use Command:
     use std::process::Command;
 
+    Command::new("rm")
+        .arg("-r")
+        .arg("graphs")
+        .spawn()
+        .expect("command rm failed to start");
+
+    Command::new("mkdir")
+        .arg("graphs")
+        .spawn()
+        .expect("command mkdir failed to start");
+
     // from : https://www.youtube.com/watch?v=sDv4f4s2SB8&t
 
-    const OBSERVED_HEIGHT: [f32; 4] = [2.4, -1.9, 0.2, -5.0];
+    const OBSERVED_VALUES: [f32; 3] = [1.4, 1.9, 3.2];
     // The height of the three people, the height 
     // is the data we want to predicte from those
     // three samples, who is what we would expecte 
-    // from the three inputs, the weights.
+    // from the three inputs, the INPUTS_VALUESs.
 
-    const WEIGHT: [f32; 4] = [4.0, -3.5, 2.3, -1.9];
-    // Their weight, this is the inputs of 
+    const INPUTS_VALUES: [f32; 3] = [0.5, 2.3, 2.9];
+    // Their INPUTS_VALUES, this is the inputs of 
     // the gradient descent.
-    // Since each weight gives one height
+    // Since each INPUTS_VALUES gives one height
     // I think I could say there are three 
     // propagations if I take it as a tiny
     // neural network.
@@ -114,16 +127,15 @@ fn main() {
     ////  GRAPHIQUE //////////////////////////////////
     let mut samples: Vec<(f32, f32)> = Vec::new();
 
-    for i in 0..= OBSERVED_HEIGHT.len() - 1 {
-        samples.push((WEIGHT[i], OBSERVED_HEIGHT[i]));
+    for i in 0..= OBSERVED_VALUES.len() - 1 {
+        samples.push((INPUTS_VALUES[i], OBSERVED_VALUES[i]));
     }
 
     ///// To determine the length of the prediction ligne on the x and y axis: ////////////////
-    let mut x_y_min_max: [f32; 4] = [WEIGHT[0]; 4];
-    //let mut x_y_min_max: [f32; 4] = [0.0; 4];
+    let mut x_y_min_max: [f32; 4] = [INPUTS_VALUES[0]; 4];
     
     // determine what are the min and max values in the samples, on the xy axis
-    for i in 0..= samples.len() - 1 {
+    for i in 0..samples.len() {
         if samples[i].0 < x_y_min_max[0] {
             x_y_min_max[0] = samples[i].0;
         }
@@ -138,27 +150,6 @@ fn main() {
         }
     }
 
-    ///// To determine the length of the graph on the x and y axis: ////////////////
-    
-    let mut x_y_min_max_graph: [f32; 4] = [0.0; 4];
-
-    for i in 0..x_y_min_max.len() {
-        /*
-        // if value is max
-        //if i == 1 || i == 3 {
-        if x_y_min_max[i] < 0.0 {
-            x_y_min_max_graph[i] = x_y_min_max[i] * 1.5;
-        }
-        // if value is min
-        //if i == 0 || i == 2 {
-        if x_y_min_max[i] >= 0.0 {
-            x_y_min_max_graph[i] = x_y_min_max[i] * 1.5;
-        }
-        */
-
-        x_y_min_max_graph[i] = x_y_min_max[i];
-    }
-    
     ////////////////////////////////////////////////////////////
 
     let try_number: usize = 1000;
@@ -177,7 +168,7 @@ fn main() {
     // and the predicted one is between precision_success and 
     // its negative
 
-    let try_nb_bettween_graphs: usize = 100;
+    let try_nb_bettween_graphs: usize = 10;
 
     let mut step_size: f32;
     // The 
@@ -207,9 +198,9 @@ fn main() {
     // <brouilon>
     // let batch_number: usize = 2;
     // pour mini batche :
-    // for j in 0..= batch_number - 1 {  à la place de for j in WEIGHT.len() -1
-    //  crée un nombre aléatoire x entre 0 et OBSERVED_HEIGHT.len()
-    //  utilise x dans WEIGHT[x] et OBSERVED_HEIGHT[x]
+    // for j in 0..= batch_number - 1 {  à la place de for j in INPUTS_VALUES.len() -1
+    //  crée un nombre aléatoire x entre 0 et OBSERVED_VALUES.len()
+    //  utilise x dans INPUTS_VALUES[x] et OBSERVED_VALUES[x]
     // </brouilon>
 
 
@@ -234,7 +225,7 @@ fn main() {
         
     //let tittle: Box<String> = Box::new(format!("graphs/gradient_descent-graph-number-0.jpeg"));
 
-    graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, 0).ok();
+    graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, 0).ok();
 
     ///////////////////////////////////
 
@@ -255,12 +246,13 @@ fn main() {
 
         // for each type of data I want to predicte, here this is the 
         // slope and the intercept, but, I think in a real neural network 
-        // it would be: for the weights and for the bias afterward since
+        // it would be: for the INPUTS_VALUESs and for the bias afterward since
         // the bias is the constente like the intercept.
 
         // That would say I will have to add another for loop for each 
-        // weights (weights_bias[0]) and for each bias afterward (weights_bias[1]).
-            if slope_intercept_trouve[y] == false {
+        // INPUTS_VALUESs (INPUTS_VALUESs_bias[0]) and for each bias afterward (INPUTS_VALUESs_bias[1]).
+            if !slope_intercept_trouve[y] { // equal to :
+            //if slope_intercept_trouve[y] == false {
                 // if the good value for this data have not been found.
                 sum_derivative_square_residual = 0.0;
                 // clean the the sum calculated from the previous iteration 
@@ -268,38 +260,38 @@ fn main() {
 
                 // will calculate difference of the observed datas
                 // and (with a -) the datas the network would give,
-                // for each pair of datas (here WEIGHT), sum it and  
+                // for each pair of datas (here INPUTS_VALUES), sum it and  
                 // will declare the data as the good one if the sum 
                 // is between the precision (precision_success), and its
                 // negative, I ask the neural network to have.
-                for j in 0..= WEIGHT.len() - 1 {
+                for j in 0..= INPUTS_VALUES.len() - 1 {
                     // for each pair of datas (given and observed), samples:
-                    predicted_height = (slope_intercept[0] * WEIGHT[j]) + slope_intercept[1];
+                    predicted_height = (slope_intercept[0] * INPUTS_VALUES[j]) + slope_intercept[1];
                     // will try to predicte the good data, I wonder if, for a real neural network,
                     // the predicted data should be the calculation of the output(s) of the network
                     // from the multiplication between the two last layers or from all of them.
 
-                    // in a function with let-else statements (weight or bias ?)
+                    // in a function with let-else statements (INPUTS_VALUES or bias ?)
                     // in a match statement (wich layer ?) and by looking
                     // the layers backward (array.len() - x)
                     // or
-                    // two function, one for the weights and another for the bias
+                    // two function, one for the INPUTS_VALUESs and another for the bias
                     // with a match statement
 
                     // the function will propably start before :
-                    // for j in 0..= WEIGHT.len() - 1 {
+                    // for j in 0..= INPUTS_VALUES.len() - 1 {
                     // because I would like to avoid calling a function in a loop
                     if y == 0 {
-                        // if the data is the slope (weights), there would be another 
-                        // if to see in wich layer is the weight
-                        derivative_square_residual = (-power_dif * WEIGHT[j]) * (OBSERVED_HEIGHT[j] - predicted_height);
-                        sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
+                        // if the data is the slope (INPUTS_VALUESs), there would be another 
+                        // if to see in wich layer is the INPUTS_VALUES
+                        derivative_square_residual = (-power_dif * INPUTS_VALUES[j]) * (OBSERVED_VALUES[j] - predicted_height);
+                        sum_derivative_square_residual += derivative_square_residual;
                     }
 
                     if y == 1 {
                         // if the data is the intercept (bias)
-                        derivative_square_residual = -power_dif * (OBSERVED_HEIGHT[j] - predicted_height);
-                        sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
+                        derivative_square_residual = -power_dif * (OBSERVED_VALUES[j] - predicted_height);
+                        sum_derivative_square_residual += derivative_square_residual;
                     }
                 }
 
@@ -307,11 +299,11 @@ fn main() {
                 step_size = sum_derivative_square_residual * slope_intercept_learning_rate[y];
 
                 // determination de la prochaine valeur de la valeur
-                slope_intercept[y] = slope_intercept[y] - step_size;
+                slope_intercept[y] -= step_size;
 
                 if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
                     slope_intercept_trouve[y] = true;
-                    true_counter = true_counter + 1;
+                    true_counter += 1;
 
                     if y == 0 {
                         println!("\n\nfini de trouver le bon coéficient directeur de la droite de prediction  ! ");
@@ -326,13 +318,6 @@ fn main() {
             }
         }
 
-        // can't add the break here because there are the for loop which will
-        // go to the next type (weight or bias) of value
-        //if true_counter == slope_intercept_trouve.len() {
-        //    break;
-        //}
-
-        // need here anyway to avoid to use the others try available 
         if true_counter == slope_intercept_trouve.len() {
             number_end = i;
             break;
@@ -341,20 +326,7 @@ fn main() {
         ////////////////// Graphic ///////////////////////
         if (i + 1) % try_nb_bettween_graphs == 0 {
             let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
-            ///// To determine the length of the graph on the x and y axis: ////////////////
-            //let mut x_y_min_max_graph: [f32; 4] = [0.0; 4];
-            
-            /* 
-            for i in 0..= x_y_min_max_graph.len() - 1 {
-                match i {
-                    0 => {x_y_min_max_graph[0] = prediction_line[0].0 * prediction_line[0].0.exp();},
-                    1 => {x_y_min_max_graph[1] = prediction_line[0].1 * prediction_line[0].1.exp();},
-                    2 => {x_y_min_max_graph[2] = prediction_line[1].0 * prediction_line[1].0.exp();},
-                    3 => {x_y_min_max_graph[3] = prediction_line[1].1 * prediction_line[1].1.exp();},
-                }
-            }*/
-
-            graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, i+1).ok();
+            graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, i+1).ok();
         }
         /////////////////////////////////////////////////////
     }
@@ -367,7 +339,7 @@ fn main() {
         //////////////////// Graphic ////////////////
         let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
             
-        graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max_graph, number_end + 1).ok();
+        graph((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, number_end + 1).ok();
         //////////////////////////////////////////
         
         //// Creation of the gif ////////////
@@ -379,6 +351,6 @@ fn main() {
             .arg("graphs/*.jpeg")
             .arg("graphs/gradient_descent.gif")
             .spawn()
-            .expect("command failed to start");
+            .expect("command convert failed to start");
     }
 }
