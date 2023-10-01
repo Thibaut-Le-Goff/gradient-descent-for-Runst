@@ -390,7 +390,7 @@ And we use this new $\textrm{\color{red}Prediction line}$ to repeat the process 
 
 Here is a little gif to show the process in action:
 <p align="center">
-    <img src="src/graphs/gradient_descent.gif" width="800"/>
+    <img src="gradient_descent.gif" width="800"/>
 </p>
 
 ___
