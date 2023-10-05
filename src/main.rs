@@ -2,10 +2,12 @@ mod graph;
 mod cache;
 mod gradiante_descent;
 
+use std::env;
 use std::process::Command;
 ////////// ALGORITM  GRADIENT DESCENT ////////////
 
 fn main() {
+    env::set_var("RUST_BACKTRACE", "1");
     // the code must not be compiled in the src
     cache::clear_cache();
 
@@ -30,7 +32,7 @@ fn main() {
 
     ////////////////////////////////////////////////////////////
 
-    let mut slope_intercept: [f32; 2] = [0.0, 0.0];
+    //let mut slope_intercept: [f32; 2] = [0.0, 0.0];
     // pour 0:
     // valeur de départ du coéficient directeur de la courbe
     // des prédictions
@@ -38,6 +40,10 @@ fn main() {
     // pour 1:
     // valeur de départ de l'intercept de la courbe
     // des prédictions
+
+    let mut weights: Vec<f32> = vec![0.0];
+
+    let mut bias: Vec<f32> = vec![0.0];
 
     let mut slope_intercept_trouve: [bool; 2] = [false, false];
     // indicate if the good slope and intercept are 
@@ -51,7 +57,7 @@ fn main() {
 
     ////////////// GRAPHIQUE /////////////////
     
-    let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
+    let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
         
     //let tittle: Box<String> = Box::new(format!("graphs/gradient_descent-graph-number-0.jpeg"));
 
@@ -70,7 +76,7 @@ fn main() {
         // I would add another for loop here :
         // for eache layer (look backward)
 
-        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut slope_intercept);
+        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut weights[0], &mut bias[0]);
 
         if true_counter == slope_intercept_trouve.len() {
             number_end = trial;
@@ -79,19 +85,19 @@ fn main() {
 
         ////////////////// Graphic ///////////////////////
         if (trial + 1) % try_nb_bettween_graphs == 0 {
-            let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
+            let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
             graph::create((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, trial+1).ok();
         }
         /////////////////////////////////////////////////////
     }
     
     if true_counter == slope_intercept_trouve.len() {
-        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", slope_intercept[0], slope_intercept[1]);
+        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", weights[0], bias[0]);
         println!("L'algorithme a fait {} essaies pour trouver les bonnes données.", number_end + 1);
         // + 1 because I want to count the first try which is with i = 0
 
         //////////////////// Graphic ////////////////
-        let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
+        let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
             
         graph::create((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, number_end + 1).ok();
         //////////////////////////////////////////
