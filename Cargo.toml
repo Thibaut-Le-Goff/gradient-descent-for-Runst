@@ -6,4 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# to create the images
 plotters = "0.3.4"
+
+# to create the gif
+# getopts = "0.2.21"
+# gif = "0.9.2"
+# image = "0.13.0"
+# color_quant = "1.0.1"
+# engiffen = "0.2.0"
+
+# for parallelism
+rayon = "1.7.0"

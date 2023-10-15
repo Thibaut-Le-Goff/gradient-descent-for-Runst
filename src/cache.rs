@@ -13,7 +13,9 @@ pub fn clear_cache() {
         .spawn()
         .expect("command rm failed to start");
 
+}
 
+pub fn create_cache() {
     Command::new("mkdir")
         .arg("graphs")
         .spawn()

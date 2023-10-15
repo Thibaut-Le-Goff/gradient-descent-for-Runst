@@ -2,37 +2,47 @@ mod graph;
 mod cache;
 mod gradiante_descent;
 
-use std::env;
 use std::process::Command;
+
+/*
+extern crate engiffen;
+
+use engiffen::{load_images, engiffen, Gif, Quantizer};
+use std::fs::File;
+*/
 ////////// ALGORITM  GRADIENT DESCENT ////////////
 
 fn main() {
-    env::set_var("RUST_BACKTRACE", "1");
     // the code must not be compiled in the src
     cache::clear_cache();
+    cache::create_cache();
 
     // from : https://www.youtube.com/watch?v=sDv4f4s2SB8&t
 
-    let observed_values: Vec<f32> = vec![1.4, 1.9, 3.2];
+    //let observed_values: Vec<f32> = vec![1.4, 1.9, 3.2];
+    let observed_values: Vec<Vec<f32>> = vec![vec![1.4], vec![1.9], vec![3.2]];
 
 
-    let input_values: Vec<f32> = vec![0.5, 2.3, 2.9];
+    //let input_values: Vec<f32> = vec![0.5, 2.3, 2.9];
+    let input_values: Vec<Vec<f32>> = vec![vec![0.5], vec![2.3], vec![2.9]];
 
 
-    ////  GRAPHIQUE //////////////////////////////////
+    /////////////  GRAPHIQUE /////////////////
     let mut samples: Vec<(f32, f32)> = Vec::new();
 
-    for i in 0..= observed_values.len() - 1 {
-        samples.push((input_values[i], observed_values[i]));
+    for i in 0..observed_values.len() {
+        samples.push((input_values[i][0], observed_values[i][0]));
     }
 
     ///// To determine the length of the prediction ligne on the x and y axis: ////////////////
-    let x_y_min_max: [f32; 4] = graph::choose_x_y_min_max(&samples, &input_values[0]);
+    let x_y_min_max: [f32; 4] = graph::choose_x_y_min_max(&samples, &input_values[0][0]);
 
 
     ////////////////////////////////////////////////////////////
 
     //let mut slope_intercept: [f32; 2] = [0.0, 0.0];
+    let mut weights: Vec<f32> = vec![0.0; 2];
+    let mut bias: Vec<f32> = vec![0.0; 2];
     // pour 0:
     // valeur de départ du coéficient directeur de la courbe
     // des prédictions
@@ -40,10 +50,6 @@ fn main() {
     // pour 1:
     // valeur de départ de l'intercept de la courbe
     // des prédictions
-
-    let mut weights: Vec<f32> = vec![0.0];
-
-    let mut bias: Vec<f32> = vec![0.0];
 
     let mut slope_intercept_trouve: [bool; 2] = [false, false];
     // indicate if the good slope and intercept are 
@@ -76,7 +82,7 @@ fn main() {
         // I would add another for loop here :
         // for eache layer (look backward)
 
-        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut weights[0], &mut bias[0]);
+        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut weights, &mut bias);
 
         if true_counter == slope_intercept_trouve.len() {
             number_end = trial;
@@ -112,5 +118,16 @@ fn main() {
             .arg("gradient_descent.gif")
             .spawn()
             .expect("command convert failed to start");
+
+        /*
+        let paths = vec!["graphs/*.bmp"];
+        let images = load_images(&paths);
+        let mut output = File::create("output.gif")?;
+        */
+  
+        // encode an animated gif at 10 frames per second
+        let gif = engiffen(&images, 10, Quantizer::Naive)?;
+        gif.write(&mut output);
+        */
     }
 }
