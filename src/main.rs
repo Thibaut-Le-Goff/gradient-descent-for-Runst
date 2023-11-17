@@ -13,36 +13,31 @@ use std::fs::File;
 ////////// ALGORITM  GRADIENT DESCENT ////////////
 
 fn main() {
-    // the code must not be compiled in the src
     cache::clear_cache();
     cache::create_cache();
 
     // from : https://www.youtube.com/watch?v=sDv4f4s2SB8&t
 
-    //let observed_values: Vec<f32> = vec![1.4, 1.9, 3.2];
-    let observed_values: Vec<Vec<f32>> = vec![vec![1.4], vec![1.9], vec![3.2]];
+    let observed_values: Vec<f32> = vec![1.4, 1.9, 3.2];
 
 
-    //let input_values: Vec<f32> = vec![0.5, 2.3, 2.9];
-    let input_values: Vec<Vec<f32>> = vec![vec![0.5], vec![2.3], vec![2.9]];
+    let input_values: Vec<f32> = vec![0.5, 2.3, 2.9];
 
 
-    /////////////  GRAPHIQUE /////////////////
+    ////  GRAPHIQUE //////////////////////////////////
     let mut samples: Vec<(f32, f32)> = Vec::new();
 
-    for i in 0..observed_values.len() {
-        samples.push((input_values[i][0], observed_values[i][0]));
+    for i in 0..= observed_values.len() - 1 {
+        samples.push((input_values[i], observed_values[i]));
     }
 
     ///// To determine the length of the prediction ligne on the x and y axis: ////////////////
-    let x_y_min_max: [f32; 4] = graph::choose_x_y_min_max(&samples, &input_values[0][0]);
+    let x_y_min_max: [f32; 4] = graph::choose_x_y_min_max(&samples, &input_values[0]);
 
 
     ////////////////////////////////////////////////////////////
 
-    //let mut slope_intercept: [f32; 2] = [0.0, 0.0];
-    let mut weights: Vec<f32> = vec![0.0; 2];
-    let mut bias: Vec<f32> = vec![0.0; 2];
+    let mut slope_intercept: [f32; 2] = [0.0, 0.0];
     // pour 0:
     // valeur de départ du coéficient directeur de la courbe
     // des prédictions
@@ -63,7 +58,7 @@ fn main() {
 
     ////////////// GRAPHIQUE /////////////////
     
-    let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
+    let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
         
     //let tittle: Box<String> = Box::new(format!("graphs/gradient_descent-graph-number-0.jpeg"));
 
@@ -82,7 +77,7 @@ fn main() {
         // I would add another for loop here :
         // for eache layer (look backward)
 
-        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut weights, &mut bias);
+        gradiante_descent::optimisation(&mut true_counter, &mut slope_intercept_trouve, &input_values, &observed_values, &mut slope_intercept);
 
         if true_counter == slope_intercept_trouve.len() {
             number_end = trial;
@@ -91,19 +86,19 @@ fn main() {
 
         ////////////////// Graphic ///////////////////////
         if (trial + 1) % try_nb_bettween_graphs == 0 {
-            let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
+            let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
             graph::create((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, trial+1).ok();
         }
         /////////////////////////////////////////////////////
     }
     
     if true_counter == slope_intercept_trouve.len() {
-        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", weights[0], bias[0]);
+        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", slope_intercept[0], slope_intercept[1]);
         println!("L'algorithme a fait {} essaies pour trouver les bonnes données.", number_end + 1);
         // + 1 because I want to count the first try which is with i = 0
 
         //////////////////// Graphic ////////////////
-        let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (weights[0] * x_y_min_max[0]) + bias[0]), (x_y_min_max[1], (weights[0] * x_y_min_max[1]) + bias[0])];
+        let prediction_line: Vec<(f32, f32)> = vec![(x_y_min_max[0], (slope_intercept[0] * x_y_min_max[0]) + slope_intercept[1]), (x_y_min_max[1], (slope_intercept[0] * x_y_min_max[1]) + slope_intercept[1])];
             
         graph::create((samples).to_vec(), (prediction_line).to_vec(), x_y_min_max, number_end + 1).ok();
         //////////////////////////////////////////
@@ -118,16 +113,5 @@ fn main() {
             .arg("gradient_descent.gif")
             .spawn()
             .expect("command convert failed to start");
-
-        /*
-        let paths = vec!["graphs/*.bmp"];
-        let images = load_images(&paths);
-        let mut output = File::create("output.gif")?;
-        */
-  
-        // encode an animated gif at 10 frames per second
-        let gif = engiffen(&images, 10, Quantizer::Naive)?;
-        gif.write(&mut output);
-        */
     }
 }
