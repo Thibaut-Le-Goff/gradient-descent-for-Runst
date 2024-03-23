@@ -1,5 +1,10 @@
+# for the Rust code
 Cargo.lock
-
 graphs
-
 target
+
+
+# for the C code
+gradient_descent
+a.out
+logs
