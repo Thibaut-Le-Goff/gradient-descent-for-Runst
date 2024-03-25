@@ -1,6 +1,9 @@
 #!/bin/bash
 
 rm -r bin
+rm logs/outputs/*.txt
+rm logs/errors/*.txt
+
 make && ./bin/test > logs/outputs/output.txt 2> logs/errors/error.txt
 make valgrind > logs/outputs/output_valgrind.txt 2> logs/errors/error_valgrind.txt
 make sanitize && ./bin/test > logs/outputs/output_sanitizer.txt 2> logs/errors/error_sanitizer.txt
