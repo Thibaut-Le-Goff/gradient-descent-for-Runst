@@ -5,6 +5,7 @@
     typedef struct Network_Parameters {
         float *weights;
         float *bias;
+        
     } Network_Parameters;
 
 
