@@ -34,17 +34,20 @@ float INPUTS[NB_INPUTS][NB_DATAS_PER_INPUTS] = {
 */
 
 
-float gradient_calculation(int *nb_propagations, float* inputs, float *observed_values, Network_Parameters *slope_and_intercept, int slope_or_intercept_indicator);
+float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs, float *observed_values, Network_Parameters *slope_and_intercept, int slope_or_intercept_indicator);
 
-void gradient_descent(int *nb_propagations, float *inputs, float *observed_values) {
+void gradient_descent(int *net_struct, int *nb_propagations, float *inputs, float *observed_values) {
 
     int slope_intercept_found[2] = {0, 0};
+    /**/
     float slope = 0.0;
+
     float intercept = 0.0;
 
     Network_Parameters *slope_and_intercept = malloc(sizeof(Network_Parameters));
     slope_and_intercept->weights = &slope;
     slope_and_intercept->bias = &intercept;
+    
 
     int number_end;
 
@@ -60,7 +63,7 @@ void gradient_descent(int *nb_propagations, float *inputs, float *observed_value
 
             if (!slope_intercept_found[slope_or_intercept_indicator]) {
 
-                float sum_derivative_square_residual = gradient_calculation(nb_propagations, inputs, observed_values, slope_and_intercept, slope_or_intercept_indicator);
+                float sum_derivative_square_residual = gradient_calculation(net_struct, nb_propagations, inputs, observed_values, slope_and_intercept, slope_or_intercept_indicator);
 
                 printf("\nSum of derivatives of square residuals: %f", sum_derivative_square_residual);
 
@@ -101,19 +104,42 @@ void gradient_descent(int *nb_propagations, float *inputs, float *observed_value
 
 
 
-float gradient_calculation(int *nb_propagations, float* inputs, float *observed_values, Network_Parameters *slope_and_intercept, int slope_or_intercept_indicator) {
+float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs, float *observed_values, Network_Parameters *slope_and_intercept, int slope_or_intercept_indicator) {
+    int size_weights_array = net_struct[0] * net_struct[1];
 
-    float predicted_height;
+    float predicted_value[net_struct[1]];
+    float step_size[size_weights_array];
+    float derivative_square_residual[size_weights_array];
+    float sum_derivative_square_residual[size_weights_array];
+    // = {0.0; net_struct[1] * net_struct[2]};
+
+    for (int init_iterator = 0; init_iterator < size_weights_array; init_iterator++) {
+        sum_derivative_square_residual[init_iterator] = 0.0;
+    }
+
+    int default_one_value = 1;
+    
+    /*
+    float predicted_value;
     float step_size;
     float derivative_square_residual;
     float sum_derivative_square_residual = 0.0;
-
+    */
 
     if (slope_or_intercept_indicator == 0) {
         for (int propagation_iterator = 0; propagation_iterator < *nb_propagations; propagation_iterator++) {
-            predicted_height = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
+            /*
+            predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
 
-            derivative_square_residual = (-POWER_DIF * inputs[propagation_iterator]) * (observed_values[propagation_iterator] - predicted_height);
+            derivative_square_residual = (-POWER_DIF * inputs[propagation_iterator]) * (observed_values[propagation_iterator] - predicted_value);
+
+            sum_derivative_square_residual += derivative_square_residual;            
+            */
+            
+            float *mul_predicted_value = mul(slope_and_intercept->weights, &inputs[propagation_iterator], &default_one_value, net_struct[0], net_struct[1]);
+            float *predicted_value = add(mul_predicted_value, slope_and_intercept->bias, size_weights_array);
+
+            derivative_square_residual = (-POWER_DIF * inputs[propagation_iterator]) * (observed_values[propagation_iterator] - predicted_value);
 
             sum_derivative_square_residual += derivative_square_residual;
         }
@@ -121,9 +147,17 @@ float gradient_calculation(int *nb_propagations, float* inputs, float *observed_
 
     if (slope_or_intercept_indicator == 1) {
         for (int propagation_iterator = 0; propagation_iterator < *nb_propagations; propagation_iterator++) {
-            predicted_height = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
+            /*
+            predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
 
-            derivative_square_residual = -POWER_DIF * (observed_values[propagation_iterator] - predicted_height);
+            derivative_square_residual = -POWER_DIF * (observed_values[propagation_iterator] - predicted_value);
+
+            sum_derivative_square_residual += derivative_square_residual;
+            */
+
+            predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
+
+            derivative_square_residual = -POWER_DIF * (observed_values[propagation_iterator] - predicted_value);
 
             sum_derivative_square_residual += derivative_square_residual;
         }

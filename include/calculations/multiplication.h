@@ -1,6 +1,6 @@
 #ifndef __MULTIPLICATION_H__
 #define __MULTIPLICATION_H__
     
-    int* mul(const int *mat1, const int *mat2, const int *column_result, const size_t size1, const size_t size2);
+    float* mul(const float *mat1, const float *mat2, const int *column_result, const int size1, const int size2);
 
 #endif //__MULTIPLICATION_H__

@@ -12,6 +12,17 @@
 //#define NB_NEURONES_LAST_LAYER 3
 
 int main() {
+    int net_struct[2] = {1, 1};
+
+    /*
+    float slope = 0.0;
+    float intercept = 0.0;
+
+    Network_Parameters *slope_and_intercept = malloc(sizeof(Network_Parameters));
+    slope_and_intercept->weights = &slope;
+    slope_and_intercept->bias = &intercept;
+    */
+
     float observed_values[NB_PROPAGATIONS] = {1.4, 1.9, 3.2};
     float inputs[NB_PROPAGATIONS] = {0.5, 2.3, 2.9};
 
@@ -31,7 +42,8 @@ int main() {
 
     int nb_propagations = NB_PROPAGATIONS;
 
-    gradient_descent(&nb_propagations, inputs, observed_values);
+    gradient_descent(net_struct, &nb_propagations, inputs, observed_values);
+
 
 
     printf("\nlayer 1 :\n");
@@ -40,26 +52,27 @@ int main() {
 
     int column_result = 1; // 1 because we want a vector
 
-    size_t size1 = sizeof(weights_1) / sizeof(weights_1[0]);
-    size_t size2 = sizeof(inputs) / sizeof(inputs[0]);
-    int *neurones_1 = mul(weights_1, inputs_2, &column_result, size1, size2);
+    size_t size_weights_1 = sizeof(weights_1) / sizeof(weights_1[0]);
+    size_t size_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    int *neurones_1 = mul(weights_1, inputs_2, &column_result, size_weights_1, size_inputs);
     //int *neurones_1 = mul(weights_1, inputs, &column_result);
 
-    int iteratore_layer_1 = size1 / size2;
+    int iteratore_layer_1 = size_weights_1 / size_inputs;
     printf("\nNumber at the neurones of the layer 1 : ");
     for (int i = 0; i < iteratore_layer_1; i++) {
         printf("%d ", neurones_1[i]);
     }
     printf("\n");
 
+
     printf("\nlayer 2 :\n");
     int weights_2[] = {0, 1, 2, 3, 4, 5};
-    size_t size3 = sizeof(weights_2) / sizeof(weights_2[0]);
-    size_t size4 = (size1 / size2);
-    int *neurones_2 = mul(weights_2, neurones_1, &column_result, size3, size4);
+    size_t size_weights_2 = sizeof(weights_2) / sizeof(weights_2[0]);
+    size_t size_inputs_2 = (size_weights_1 / size_inputs);
+    int *neurones_2 = mul(weights_2, neurones_1, &column_result, size_weights_2, size_inputs_2);
     //int *neurones_2 = mul(weights_2, neurones_1, &column_result);
 
-    int iteratore_layer_2 = size3 / size4;
+    int iteratore_layer_2 = size_weights_2 / size_inputs_2;
     printf("\nNumber at the neurones of the layer 2 : ");
     for (int i = 0; i < iteratore_layer_2; i++) {
         printf("%d ", neurones_2[i]);
