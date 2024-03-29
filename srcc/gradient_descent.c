@@ -10,7 +10,7 @@
 // gcc gradient_descent.c && valgrind ./a.out
 
 #define TRY_NUMBER 1000
-#define POWER_DIF 2.0
+#define POWER_DIF -2.0
 #define PRECISION_SUCCESS 0.001
 
 float SLOPE_INTERCEOT_LEARNING_RATE[2] = {0.01, 0.1};
@@ -107,15 +107,17 @@ void gradient_descent(int *net_struct, int *nb_propagations, float *inputs, floa
 float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs, float *observed_values, Network_Parameters *slope_and_intercept, int slope_or_intercept_indicator) {
     int size_weights_array = net_struct[0] * net_struct[1];
 
+    /*
     float predicted_value[net_struct[1]];
     float step_size[size_weights_array];
     float derivative_square_residual[size_weights_array];
-    float sum_derivative_square_residual[size_weights_array];
-    // = {0.0; net_struct[1] * net_struct[2]};
+    
+    float *sum_derivative_square_residual[size_weights_array];
 
     for (int init_iterator = 0; init_iterator < size_weights_array; init_iterator++) {
-        sum_derivative_square_residual[init_iterator] = 0.0;
+        *(sum_derivative_square_residual[init_iterator]) = 0.0;
     }
+    */
 
     int default_one_value = 1;
     
@@ -126,7 +128,16 @@ float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs,
     float sum_derivative_square_residual = 0.0;
     */
 
+    // (0 = SLOPE, 1 = INTERCEPT)
     if (slope_or_intercept_indicator == 0) {
+
+        float *step_size[size_weights_array];
+        float *sum_derivative_square_residual[size_weights_array];
+
+        for (int init_iterator = 0; init_iterator < size_weights_array; init_iterator++) {
+            *(sum_derivative_square_residual[init_iterator]) = 0.0;
+        }
+
         for (int propagation_iterator = 0; propagation_iterator < *nb_propagations; propagation_iterator++) {
             /*
             predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
@@ -136,16 +147,33 @@ float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs,
             sum_derivative_square_residual += derivative_square_residual;            
             */
             
-            float *mul_predicted_value = mul(slope_and_intercept->weights, &inputs[propagation_iterator], &default_one_value, net_struct[0], net_struct[1]);
-            float *predicted_value = add(mul_predicted_value, slope_and_intercept->bias, size_weights_array);
+            /// propagation
+            float *pre_mul_predicted_value = mul(slope_and_intercept->weights, &inputs[propagation_iterator], &default_one_value, size_weights_array, net_struct[0]);
+            float *predicted_value = add(pre_mul_predicted_value, slope_and_intercept->bias, net_struct[1]);
+            ///
+            
+            float power_dif = POWER_DIF;
+            float *pre_mul_derivative_square_residual = mul(&inputs[propagation_iterator], &power_dif, &default_one_value, net_struct[0], default_one_value);
+            float *pre_sub_derivative_square_residual = sub(&observed_values[propagation_iterator], predicted_value, net_struct[1]);
 
-            derivative_square_residual = (-POWER_DIF * inputs[propagation_iterator]) * (observed_values[propagation_iterator] - predicted_value);
+            float *derivative_square_residual = mul(pre_mul_derivative_square_residual, pre_sub_derivative_square_residual, &default_one_value, net_struct[0], net_struct[1]);
 
-            sum_derivative_square_residual += derivative_square_residual;
+            *sum_derivative_square_residual = add(derivative_square_residual, *sum_derivative_square_residual, size_weights_array);
         }
+
+        *step_size = mul(*sum_derivative_square_residual, &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator], &default_one_value, net_struct[1], default_one_value);
     }
 
+    // (0 = SLOPE, 1 = INTERCEPT)
     if (slope_or_intercept_indicator == 1) {
+
+        float *step_size[net_struct[1]];
+        float *sum_derivative_square_residual[net_struct[1]];
+
+        for (int init_iterator = 0; init_iterator < size_weights_array; init_iterator++) {
+            *(sum_derivative_square_residual[init_iterator]) = 0.0;
+        }
+
         for (int propagation_iterator = 0; propagation_iterator < *nb_propagations; propagation_iterator++) {
             /*
             predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
@@ -155,16 +183,27 @@ float gradient_calculation(int *net_struct, int *nb_propagations, float* inputs,
             sum_derivative_square_residual += derivative_square_residual;
             */
 
-            predicted_value = (*(slope_and_intercept->weights) * inputs[propagation_iterator]) + *(slope_and_intercept->bias);
+            /// propagation
+            float *pre_mul_predicted_value = mul(slope_and_intercept->weights, &inputs[propagation_iterator], &default_one_value, size_weights_array, net_struct[0]);
+            float *predicted_value = add(pre_mul_predicted_value, slope_and_intercept->bias, net_struct[1]);
+            ///
 
-            derivative_square_residual = -POWER_DIF * (observed_values[propagation_iterator] - predicted_value);
 
-            sum_derivative_square_residual += derivative_square_residual;
+            float power_dif = POWER_DIF;
+            //float *pre_mul_derivative_square_residual = mul(&inputs[propagation_iterator], &power_dif, &default_one_value, net_struct[0], default_one_value);
+            float *pre_sub_derivative_square_residual = sub(&observed_values[propagation_iterator], predicted_value, net_struct[1]);
+
+            float *derivative_square_residual = mul(pre_sub_derivative_square_residual, &power_dif, &default_one_value, net_struct[1], default_one_value);
+
+            *sum_derivative_square_residual = add(derivative_square_residual, *sum_derivative_square_residual, net_struct[1]);
         }
+
+        *step_size = mul(*sum_derivative_square_residual, &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator], &default_one_value, net_struct[1], default_one_value);
     }
 
 
-    step_size = sum_derivative_square_residual * SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator];
+    //step_size = sum_derivative_square_residual * SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator];
+
     printf("\nStep size: %f", step_size);
 
     if (slope_or_intercept_indicator == 0) {

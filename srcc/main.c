@@ -47,14 +47,14 @@ int main() {
 
 
     printf("\nlayer 1 :\n");
-    int weights_1[] = {0, 1, 2, 3, 4, 5};
-    int inputs_2[] = {0, 1, 2};
+    float weights_1[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+    float inputs_2[] = {0.0, 1.0, 2.0};
 
     int column_result = 1; // 1 because we want a vector
 
-    size_t size_weights_1 = sizeof(weights_1) / sizeof(weights_1[0]);
-    size_t size_inputs = sizeof(inputs) / sizeof(inputs[0]);
-    int *neurones_1 = mul(weights_1, inputs_2, &column_result, size_weights_1, size_inputs);
+    int size_weights_1 = sizeof(weights_1) / sizeof(weights_1[0]);
+    int size_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    float *neurones_1 = mul(weights_1, inputs_2, &column_result, size_weights_1, size_inputs);
     //int *neurones_1 = mul(weights_1, inputs, &column_result);
 
     int iteratore_layer_1 = size_weights_1 / size_inputs;
@@ -66,10 +66,10 @@ int main() {
 
 
     printf("\nlayer 2 :\n");
-    int weights_2[] = {0, 1, 2, 3, 4, 5};
-    size_t size_weights_2 = sizeof(weights_2) / sizeof(weights_2[0]);
-    size_t size_inputs_2 = (size_weights_1 / size_inputs);
-    int *neurones_2 = mul(weights_2, neurones_1, &column_result, size_weights_2, size_inputs_2);
+    float weights_2[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+    int size_weights_2 = sizeof(weights_2) / sizeof(weights_2[0]);
+    int size_inputs_2 = (size_weights_1 / size_inputs);
+    float *neurones_2 = mul(weights_2, neurones_1, &column_result, size_weights_2, size_inputs_2);
     //int *neurones_2 = mul(weights_2, neurones_1, &column_result);
 
     int iteratore_layer_2 = size_weights_2 / size_inputs_2;
@@ -81,13 +81,13 @@ int main() {
 
 
     printf("\ntest :\n");
-    int mat[] = {0, 1, 2, 3, 4, 5};
+    float mat[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
     //int scal[] = {2};
-    int scal = 2;
-    size_t size_mat = sizeof(mat) / sizeof(mat[0]);
-    //size_t size_scal = sizeof(scal) / sizeof(scal[0]);
-    size_t size_scal = 1;
-    int *res_test = mul(mat, &scal, &column_result, size_mat, size_scal);
+    float scal = 2.0;
+    int size_mat = sizeof(mat) / sizeof(mat[0]);
+    //int size_scal = sizeof(scal) / sizeof(scal[0]);
+    int size_scal = 1;
+    float *res_test = mul(mat, &scal, &column_result, size_mat, size_scal);
     //int *neurones_2 = mul(weights_2, neurones_1, &column_result);
 
     int iteratore_test = size_mat / size_scal;
