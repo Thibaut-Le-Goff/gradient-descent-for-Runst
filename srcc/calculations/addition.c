@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float* add(const float *mat1, const float *mat2, const int size) {
+float *add(const float *mat1, const float *mat2, const int size) {
 
     float *vec_result = (float*)malloc(size * sizeof(float));
 

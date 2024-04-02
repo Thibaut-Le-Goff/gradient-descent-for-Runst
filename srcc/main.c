@@ -60,7 +60,7 @@ int main() {
     int iteratore_layer_1 = size_weights_1 / size_inputs;
     printf("\nNumber at the neurones of the layer 1 : ");
     for (int i = 0; i < iteratore_layer_1; i++) {
-        printf("%d ", neurones_1[i]);
+        printf("%f ", neurones_1[i]);
     }
     printf("\n");
 
@@ -75,7 +75,7 @@ int main() {
     int iteratore_layer_2 = size_weights_2 / size_inputs_2;
     printf("\nNumber at the neurones of the layer 2 : ");
     for (int i = 0; i < iteratore_layer_2; i++) {
-        printf("%d ", neurones_2[i]);
+        printf("%f ", neurones_2[i]);
     }
     printf("\n");
 
@@ -93,7 +93,7 @@ int main() {
     int iteratore_test = size_mat / size_scal;
     printf("\ntest to see if I can multiply a vector by a number : ");
     for (int i = 0; i < iteratore_test; i++) {
-        printf("%d ", res_test[i]);
+        printf("%f ", res_test[i]);
     }
     printf("\n");
 
