@@ -24,10 +24,10 @@ int main() {
     float predicted_height;
     float derivative_square_residual;
 
-    for (int try = 0; try <= try_number - 1; try++) {
+    for (int try = 0; try < try_number; try++) {
 
         // (0 = slope, 1 = intercept)
-        for (int slope_or_intercept_indicator = 0; slope_or_intercept_indicator <= 1; slope_or_intercept_indicator++) {
+        for (int slope_or_intercept_indicator = 0; slope_or_intercept_indicator < 2; slope_or_intercept_indicator++) {
             if (true_counter == 2) {
                 break;
             }

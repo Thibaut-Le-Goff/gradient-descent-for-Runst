@@ -8,11 +8,11 @@
 #include "../include/calculations/substraction.h"
 
 #define NB_PROPAGATIONS 3
-//#define NB_NEURONES_FIRST_LAYER 2
-//#define NB_NEURONES_LAST_LAYER 3
+#define NB_NEURONES_FIRST_LAYER 1
+#define NB_NEURONES_LAST_LAYER 1
 
 int main() {
-    int net_struct[2] = {1, 1};
+    int net_struct[2] = {NB_NEURONES_FIRST_LAYER, NB_NEURONES_LAST_LAYER};
 
     /*
     float slope = 0.0;
@@ -21,28 +21,29 @@ int main() {
     Network_Parameters *slope_and_intercept = malloc(sizeof(Network_Parameters));
     slope_and_intercept->weights = &slope;
     slope_and_intercept->bias = &intercept;
-    */
+    
 
     float observed_values[NB_PROPAGATIONS] = {1.4, 1.9, 3.2};
     float inputs[NB_PROPAGATIONS] = {0.5, 2.3, 2.9};
-
-    /*
-    float INPUTS[NB_PROPAGATION][NB_NEURONES_FIRST_LAYER] = {
-        {0.5, 2.3},
-        {0.5, 2},
-        {0.5, 2.3}
-    };
-
-    float OBSERVED_VALUES[NB_PROPAGATION][NB_NEURONES_LAST_LAYER] = {
-        {1.4, 1.9, 2.4},
-        {1.4, 2, 1.5},
-        {1.4, 1.9, 1.2}
-    };
     */
+
+    /**/
+    float inputs[NB_PROPAGATIONS][NB_NEURONES_FIRST_LAYER] = {
+        {0.5},
+        {2.3},
+        {2.9}
+    };
+
+    float observed_values[NB_PROPAGATIONS][NB_NEURONES_LAST_LAYER] = {
+        {1.4},
+        {1.9},
+        {3.2}
+    };
+    
 
     int nb_propagations = NB_PROPAGATIONS;
 
-    gradient_descent(net_struct, &nb_propagations, inputs, observed_values);
+    gradient_descent(net_struct, &nb_propagations, (float *)inputs, (float *)observed_values);
 
 
 
@@ -59,6 +60,8 @@ int main() {
 
     int iteratore_layer_1 = size_weights_1 / size_inputs;
     printf("\nNumber at the neurones of the layer 1 : ");
+    
+    printf("\n");
     for (int i = 0; i < iteratore_layer_1; i++) {
         printf("%f ", neurones_1[i]);
     }
@@ -74,6 +77,8 @@ int main() {
 
     int iteratore_layer_2 = size_weights_2 / size_inputs_2;
     printf("\nNumber at the neurones of the layer 2 : ");
+    
+    printf("\n");
     for (int i = 0; i < iteratore_layer_2; i++) {
         printf("%f ", neurones_2[i]);
     }
@@ -92,6 +97,8 @@ int main() {
 
     int iteratore_test = size_mat / size_scal;
     printf("\ntest to see if I can multiply a vector by a number : ");
+
+    printf("\n");
     for (int i = 0; i < iteratore_test; i++) {
         printf("%f ", res_test[i]);
     }
