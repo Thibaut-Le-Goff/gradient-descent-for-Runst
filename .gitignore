@@ -2,10 +2,10 @@
 Cargo.lock
 graphs
 target
+gradient_descent
 
 
 # for the C code
-gradient_descent
 a.out
 logs
 bin

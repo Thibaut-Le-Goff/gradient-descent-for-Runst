@@ -32,7 +32,7 @@ float* mul(const float *mat1, const float *mat2, const int *column_result, const
                 // to the number of columns of the matrix as the result :                
                 int index_mat2 = (*column_result * row_mat2) + col_mat2;
 
-                int pre_result = mat1[index_mat1] * mat2[index_mat2];
+                float pre_result = mat1[index_mat1] * mat2[index_mat2];
                 result += pre_result;
             }
             
