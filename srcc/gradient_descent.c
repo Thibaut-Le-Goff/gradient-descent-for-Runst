@@ -46,17 +46,19 @@ void gradient_descent(int *net_struct, int *nb_propagations, float *inputs, floa
                 break;
             }
 
-            printf("\nFor value (0 = slope, 1 = intercept): %d", slope_or_intercept_indicator);
+            //printf("\nFor value (0 = slope, 1 = intercept): %d", slope_or_intercept_indicator);
 
             if (!slope_intercept_found[slope_or_intercept_indicator]) {
 
                 float *sum_derivative_square_residual = gradient_calculation(net_struct, nb_propagations, inputs, observed_values, slope_and_intercept, slope_or_intercept_indicator);
 
+                /*
                 printf("\nSum of derivatives of square residuals:");
                 for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
                     printf(" %f,", sum_derivative_square_residual[vector_iterator]);
                 }
                 printf("\n\n");
+                */
 
                 if (sum_derivative_square_residual[0] <= PRECISION_SUCCESS && sum_derivative_square_residual[0] >= -PRECISION_SUCCESS) {
                 // to adapt this to matrix we will propably do an average of every 
@@ -68,7 +70,7 @@ void gradient_descent(int *net_struct, int *nb_propagations, float *inputs, floa
                     if (slope_or_intercept_indicator == 0) {
                         printf("\n\nFound correct slope coefficient of prediction line!");
                         printf("\nslope coefficient:");
-                        for(int vector_iterator = 0; vector_iterator <= size_weights_array; vector_iterator++) {
+                        for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
                             printf(" %f,", slope_and_intercept->weights[vector_iterator]);
                         }
                         printf("\n\n");
@@ -77,7 +79,7 @@ void gradient_descent(int *net_struct, int *nb_propagations, float *inputs, floa
                     if (slope_or_intercept_indicator == 1) {
                         printf("\n\nFound correct intercept of prediction line!");
                         printf("\nintercept:");
-                        for(int vector_iterator = 0; vector_iterator <= net_struct[0]; vector_iterator++) {
+                        for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                             printf(" %f,", slope_and_intercept->bias[vector_iterator]);
                         }
                         printf("\n\n");
@@ -156,23 +158,23 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
             float *pre_mul_predicted_value = mul(slope_and_intercept->weights, &inputs[propagation_iterator], &default_one_value, size_weights_array, net_struct[0]);
             // the length of the result is equal to net_struct[1]
 
-            ///
+            /*//
             printf("\npre_mul_predicted_value = slope_and_intercept->weights * &inputs[propagation_iterator]:\n");
             for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                 //printf("%f = %f * %f\n", pre_mul_predicted_value[vector_iterator], slope_and_intercept->weights[vector_iterator], *(&inputs[propagation_iterator][vector_iterator]));
                 printf("%f = %f * %f\n", pre_mul_predicted_value[vector_iterator], slope_and_intercept->weights[vector_iterator], inputs[vector_iterator]);
             }
-            ///
+            *///
 
             float *predicted_value = add(pre_mul_predicted_value, slope_and_intercept->bias, net_struct[1]);
             // the length of the result is equal to net_struct[1]
 
-            ///
+            /*//
             printf("\npredicted_value = pre_mul_predicted_value + slope_and_intercept->bias:\n");
             for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                 printf("%f = %f + %f\n", predicted_value[vector_iterator], pre_mul_predicted_value[vector_iterator], slope_and_intercept->bias[vector_iterator]);
             }
-            ///
+            *///
 
             free(pre_mul_predicted_value);
             
@@ -180,23 +182,23 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
             float *pre_mul_derivative_square_residual = mul(&inputs[propagation_iterator], &power_dif, &default_one_value, net_struct[0], default_one_value);
             // the length of the result is equal to net_struct[1]
 
-            ///
+            /*//
             printf("\npre_mul_derivative_square_residual = &inputs[propagation_iterator] * &power_dif:\n");
             for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                 printf("%f = %f * %f\n", pre_mul_derivative_square_residual[vector_iterator], inputs[vector_iterator], power_dif);
             }
-            ///
+            *///
 
             float *pre_sub_derivative_square_residual = sub(&observed_values[propagation_iterator], predicted_value, net_struct[1]);
             // the length of the result is equal to net_struct[1]
 
-            ///
+            /*//
             printf("\npre_sub_derivative_square_residual = &observed_values[propagation_iterator] * &power_dif:\n");
             for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                 //printf("%f = %f - %f\n", pre_sub_derivative_square_residual[vector_iterator], observed_values[propagation_iterator][vector_iterator], predicted_value[vector_iterator]);
                 printf("%f = %f - %f\n", pre_sub_derivative_square_residual[vector_iterator], observed_values[vector_iterator], predicted_value[vector_iterator]);
             }
-            ///
+            *///
 
             free(predicted_value);
 
@@ -205,21 +207,21 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
             //float *sum_derivative_square_residual = add(derivative_square_residual, sum_derivative_square_residual, size_weights_array);
             //*sum_derivative_square_residual = add(derivative_square_residual, sum_derivative_square_residual, size_weights_array);
             
-            ///
+            /*//
             printf("\nderivative_square_residual = pre_mul_derivative_square_residual * pre_sub_derivative_square_residual:\n");
             for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
                 printf("%f = %f * %f\n", derivative_square_residual[vector_iterator], pre_mul_derivative_square_residual[vector_iterator], pre_sub_derivative_square_residual[vector_iterator]);
             }
-            ///
+            *///
 
             free(pre_mul_derivative_square_residual);
             free(pre_sub_derivative_square_residual);
 
             ///
-            printf("\nsum_derivative_square_residual = sum_derivative_square_residual + derivative_square_residual:\n");
+            //printf("\nsum_derivative_square_residual = sum_derivative_square_residual + derivative_square_residual:\n");
             for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
                 sum_derivative_square_residual[vector_iterator] = sum_derivative_square_residual[vector_iterator] + derivative_square_residual[vector_iterator];
-                printf("%f = %f * %f\n", sum_derivative_square_residual[vector_iterator], sum_derivative_square_residual[vector_iterator], derivative_square_residual[vector_iterator]);
+                //printf("%f = %f * %f\n", sum_derivative_square_residual[vector_iterator], sum_derivative_square_residual[vector_iterator], derivative_square_residual[vector_iterator]);
             }
             ///
 
@@ -229,24 +231,24 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
         //float *step_size[size_weights_array] = mul(*sum_derivative_square_residual, &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator], &default_one_value, net_struct[1], default_one_value);
         float *step_size = mul(sum_derivative_square_residual, &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator], &default_one_value, net_struct[1], default_one_value);
         
-        ///
+        /*//
         printf("\nstep_size = sum_derivative_square_residual * &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator]:\n");
         for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
             printf("%f = %f * %f\n", step_size[vector_iterator], sum_derivative_square_residual[vector_iterator], SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator]);
         }
-        ///
+        *///
 
         //slope_and_intercept->weights = sub(slope_and_intercept->weights, step_size, size_weights_array);
         for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
             slope_and_intercept->weights[vector_iterator] = slope_and_intercept->weights[vector_iterator] - step_size[vector_iterator];
         }
 
-        ///
+        /*//
         printf("\nslope_and_intercept->weights[vector_iterator] = slope_and_intercept->weights[vector_iterator] - step_size[vector_iterator]:\n");
         for(int vector_iterator = 0; vector_iterator < size_weights_array; vector_iterator++) {
             printf("%f = %f - %f\n", slope_and_intercept->weights[vector_iterator], slope_and_intercept->weights[vector_iterator], step_size[vector_iterator]);
         }
-        ///
+        *///
 
         free(step_size);
         return (float *)sum_derivative_square_residual;
@@ -305,6 +307,7 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
 
         float *step_size = mul(sum_derivative_square_residual, &SLOPE_INTERCEOT_LEARNING_RATE[slope_or_intercept_indicator], &default_one_value, net_struct[1], default_one_value);
         
+        /*
         printf("\nStep size:");
         for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
             printf(" %f,", step_size[vector_iterator]);
@@ -314,17 +317,21 @@ float *gradient_calculation(int *net_struct, int *nb_propagations, float *inputs
         printf("\nOld value:");
         for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
             printf(" %f,", slope_and_intercept->bias[vector_iterator]);
-        }                
+        }
+        */
+
         //slope_and_intercept->bias = sub(slope_and_intercept->bias, step_size, net_struct[1]);
         for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
             slope_and_intercept->bias[vector_iterator] = slope_and_intercept->bias[vector_iterator] - step_size[vector_iterator];
         }
 
+        /*
         printf("\nNew value:");
         for(int vector_iterator = 0; vector_iterator < net_struct[1]; vector_iterator++) {
             printf(" %f,", slope_and_intercept->bias[vector_iterator]);
         }
         printf("\n\n");
+        */
 
         free(step_size);
         return (float *)sum_derivative_square_residual;
